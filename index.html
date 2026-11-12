@@ -3,130 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIP 专属极客下载中心</title>
+    <title>VIP 专属资源下载中心</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #0d0d0d; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 15px; }
-        .container { background: #1a1a1a; padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; max-width: 500px; text-align: center; border: 1px solid #333; margin-top: 10px; margin-bottom: 40px;}
-        h1 { font-size: 20px; margin-bottom: 10px; color: #ffffff; letter-spacing: 2px; }
-        p.subtitle { font-size: 13px; color: #888; margin-bottom: 20px; }
+        body { background-color: #f5f5f5; color: #333; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 15px; }
+        .container { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 500px; text-align: center; border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 40px;}
+        h1 { font-size: 22px; margin-bottom: 10px; color: #111; font-weight: 600; }
+        p.subtitle { font-size: 14px; color: #666; margin-bottom: 25px; }
         
         .input-group { display: flex; flex-direction: column; gap: 15px; }
-        input[type="password"] { width: 100%; padding: 14px; background: #222; border: 1px solid #444; border-radius: 8px; color: #fff; font-size: 16px; text-align: center; outline: none; }
-        button { padding: 14px; background: #ffffff; color: #121212; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%;}
-        button:active { transform: scale(0.97); background: #ccc; }
-        .error-msg { color: #ff5252; font-size: 13px; margin-top: 10px; display: none; }
+        input[type="password"] { width: 100%; padding: 14px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 8px; color: #333; font-size: 16px; text-align: center; outline: none; }
+        input[type="password"]:focus { border-color: #007bff; }
+        button { padding: 14px; background: #007bff; color: #ffffff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; width: 100%;}
+        button:active { transform: scale(0.98); background: #0056b3; }
+        .error-msg { color: #dc3545; font-size: 14px; margin-top: 10px; display: none; }
 
         /* 主内容区 */
         #main-area { display: none; text-align: left; }
         
-        .section-title { font-size: 14px; color: #aaa; margin: 20px 0 10px 0; border-left: 3px solid #4CAF50; padding-left: 8px; font-weight: bold; }
+        .section-title { font-size: 16px; color: #333; margin: 25px 0 15px 0; border-left: 4px solid #007bff; padding-left: 10px; font-weight: 600; }
         
         /* 菜单列表样式 */
         .menu-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
         .menu-item { 
-            background: #222; 
+            background: #f8f9fa; 
             padding: 16px; 
             border-radius: 8px; 
             display: flex; 
             justify-content: space-between; 
             align-items: center; 
             cursor: pointer;
-            border: 1px solid #333;
+            border: 1px solid #e9ecef;
             transition: background 0.2s;
         }
-        .menu-item:active { background: #2a2a2a; }
-        .menu-item span { font-size: 15px; color: #fff; font-weight: bold; }
-        .menu-item .arrow { color: #666; font-size: 16px; font-weight: bold; }
+        .menu-item:active { background: #e2e6ea; }
+        .menu-item span { font-size: 15px; color: #333; font-weight: 500; }
+        .menu-item .arrow { color: #aaa; font-size: 16px; }
         
         /* 软件下载区卡片 */
-        .action-item { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #333;}
-        .action-item span { font-size: 14px; color: #ccc; font-weight: bold; }
+        .action-item { background: #f8f9fa; padding: 16px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px; border: 1px solid #e9ecef;}
+        .action-item span { font-size: 15px; color: #333; font-weight: 500; }
         
-        .btn-blue { background: #2196F3; color: white; text-decoration: none; padding: 12px; border-radius: 5px; font-size: 14px; display: block; text-align: center; font-weight: bold;}
-        .btn-orange { background: #FF9800; color: white; }
+        .btn-blue { background: #17a2b8; color: white; text-decoration: none; padding: 12px; border-radius: 6px; font-size: 15px; display: block; text-align: center; font-weight: 600;}
+        .btn-orange { background: #fd7e14; color: white; }
+        .btn-orange:active { background: #e36a0b; }
 
-        /* 防止倒卖声明 */
-        .notice { font-size: 12px; color: #ff9800; background: #2a1a00; padding: 15px; border-radius: 8px; margin-top: 20px; line-height: 1.6; border: 1px solid #442200; }
+        /* 声明 */
+        .notice { font-size: 13px; color: #856404; background: #fff3cd; padding: 16px; border-radius: 8px; margin-top: 25px; line-height: 1.6; border: 1px solid #ffeeba; }
         
         /* 弹窗 Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 999; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: #1a1a1a; width: 100%; max-width: 350px; padding: 25px; border-radius: 12px; border: 1px solid #444; text-align: center; position: relative;}
-        .close-btn { position: absolute; top: 10px; right: 15px; color: #888; font-size: 20px; cursor: pointer; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; justify-content: center; align-items: center; padding: 20px; }
+        .modal-content { background: #ffffff; width: 100%; max-width: 350px; padding: 25px; border-radius: 12px; text-align: center; position: relative;}
+        .close-btn { position: absolute; top: 15px; right: 15px; color: #999; font-size: 24px; cursor: pointer; }
         
-        /* 隐藏的解密成功区域 */
-        .hidden-content { display: none; margin-top: 15px; padding: 15px; background: #111; border-radius: 8px; border: 1px dashed #4CAF50; }
-        .hidden-content p { font-size: 13px; color: #4CAF50; margin-bottom: 8px; word-break: break-all;}
-        .wx-qq { font-size: 15px; color: #fff; font-weight: bold; margin: 5px 0; background: #333; padding: 8px; border-radius: 5px; border-left: 3px solid #ff0055;}
+        /* 隐藏的解密区域 */
+        .hidden-content { display: none; margin-top: 15px; padding: 15px; background: #e8f5e9; border-radius: 8px; border: 1px solid #c8e6c9; }
+        .hidden-content p { font-size: 14px; color: #2e7d32; margin-bottom: 8px; word-break: break-all;}
+        .wx-qq { font-size: 15px; color: #333; font-weight: 600; margin: 6px 0; background: #f1f1f1; padding: 10px; border-radius: 6px; border-left: 4px solid #dc3545;}
 
-        /* 全屏看图 Modal */
-        #image-viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; overflow-y: auto; }
-        #image-viewer img { width: 100%; display: block; }
-        .close-img { position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: white; border-radius: 50%; width: 40px; height: 40px; line-height: 40px; text-align: center; font-size: 24px; font-weight: bold; cursor: pointer; z-index: 1001; border: 1px solid #fff;}
+        /* 全屏看图 */
+        #image-viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; overflow-y: auto; }
+        #image-viewer img { width: 100%; display: block; margin: 0 auto; }
+        .close-img { position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 40px; height: 40px; line-height: 40px; text-align: center; font-size: 24px; font-weight: bold; cursor: pointer; z-index: 1001; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <!-- 主密码验证区 -->
+    <!-- 密码验证区 -->
     <div id="login-area">
-        <h1>✧ 内部极客直通车 ✧</h1>
-        <p class="subtitle">仅限已购 VIP 用户访问</p>
+        <h1>VIP 专属下载中心</h1>
+        <p class="subtitle">请凭提取密码访问</p>
         <div class="input-group">
-            <input type="password" id="main-pwd" placeholder="请输入主提取密码" autocomplete="off">
-            <button onclick="checkMainPwd()">解锁页面</button>
+            <input type="password" id="main-pwd" placeholder="请输入提取密码" autocomplete="off">
+            <button onclick="checkMainPwd()">解锁资源</button>
         </div>
         <p class="error-msg" id="main-error">密码错误，请检查后重试</p>
     </div>
 
     <!-- 解锁后的主内容区 -->
     <div id="main-area">
-        <h1 style="text-align: center;">✧ 资源与教程 ✧</h1>
-        <p class="subtitle" style="text-align: center;">请先仔细阅读教程，再进行操作</p>
+        <h1>资源与教程</h1>
+        <p class="subtitle">请先阅读教程，再进行操作</p>
         
-        <!-- 教程选项区 (菜单列表样式) -->
-        <div class="section-title">📖 图文保姆级教程目录</div>
+        <!-- 教程目录 -->
+        <div class="section-title">图文教程目录</div>
         <div class="menu-list">
-            <!-- 点击调用 openImage() 函数 -->
-            <div class="menu-item" onclick="openImage('https://raw.githubusercontent.com/xyykx43/PS5-/main/ps1.png')">
+            <!-- 注意这里：使用了 jsDelivr 加速器加载图片 -->
+            <div class="menu-item" onclick="openImage('https://cdn.jsdelivr.net/gh/xyykx43/PS5-@main/ps1.png')">
                 <span>1. 本地连接教程</span>
                 <div class="arrow">&gt;</div>
             </div>
-            <div class="menu-item" onclick="openImage('https://raw.githubusercontent.com/xyykx43/PS5-/main/ps2.png')">
+            <div class="menu-item" onclick="openImage('https://cdn.jsdelivr.net/gh/xyykx43/PS5-@main/ps2.png')">
                 <span>2. 远程连接教程</span>
                 <div class="arrow">&gt;</div>
             </div>
-            <div class="menu-item" onclick="openImage('https://raw.githubusercontent.com/xyykx43/PS5-/main/ps3.png')">
-                <span>3. 注意事项</span>
+            <div class="menu-item" onclick="openImage('https://cdn.jsdelivr.net/gh/xyykx43/PS5-@main/ps3.png')">
+                <span>3. 注意事项说明</span>
                 <div class="arrow">&gt;</div>
             </div>
         </div>
 
         <!-- 软件下载区 -->
-        <div class="section-title">📦 核心工具下载</div>
+        <div class="section-title">核心工具下载</div>
         
         <div class="action-item">
-            <span>1. Tailscale (免费组网核心)</span>
-            <a href="https://a2xz.hwxz999.com/app/202509/30/tailscale_262960.apk?tk=eJIoMYIQOEOQNYNIIMOIIAOIMUMwcIMwZIIRaxYFZ8NINAYBIweIOgOMMRy3jxTsnij3T0zzTsmijsnijxT1iiy6Cii6nhWz2sVyj5juXriii6TyT1T9" class="btn-blue" target="_blank">直接下载安卓版</a>
+            <span>1. Tailscale (免费组网)</span>
+            <a href="https://a2xz.hwxz999.com/app/202509/30/tailscale_262960.apk?tk=eJIoMYIQOEOQNYNIIMOIIAOIMUMwcIMwZIIRaxYFZ8NINAYBIweIOgOMMRy3jxTsnij3T0zzTsmijsnijxT1iiy6Cii6nhWz2sVyj5juXriii6TyT1T9" class="btn-blue" target="_blank">下载安卓版</a>
         </div>
 
         <div class="action-item">
-            <span>2. PSPlay (安卓破解版 - 收费项)</span>
-            <button class="btn-orange" onclick="openModal('psplay')">点击输入密码获取下载</button>
+            <span>2. PSPlay (安卓破解版)</span>
+            <button class="btn-orange" onclick="openModal('psplay')">输入密码获取下载</button>
             <div id="psplay-unlocked" class="hidden-content">
-                <p>✅ 验证通过！点击下方链接下载：</p>
-                <a href="https://apid.kxdw.com/adown/142364/?html=2" style="color:#4CAF50; font-size:14px; word-break:break-all; font-weight:bold;" target="_blank">点击下载 PSPlay 破解版</a>
+                <p>验证通过，请点击下方下载：</p>
+                <a href="https://apid.kxdw.com/adown/142364/?html=2" style="color:#0056b3; font-size:15px; word-break:break-all; font-weight:bold; text-decoration:none;" target="_blank">点击下载 PSPlay 破解版</a>
             </div>
         </div>
 
         <div class="action-item">
-            <span>3. iOS 港服账号借玩 (收费项)</span>
-            <button class="btn-orange" onclick="openModal('ios')">点击输入密码获取账号</button>
+            <span>3. iOS 港服账号借玩</span>
+            <button class="btn-orange" onclick="openModal('ios')">输入密码获取账号</button>
             <div id="ios-unlocked" class="hidden-content">
-                <p>✅ 验证通过！请使用以下账号登录 App Store（请勿在设置登录iCloud！）：</p>
-                <p style="color:#fff;">账号：2143742498@qq.com</p>
-                <p style="color:#fff;">密码：14717515532+Xf</p>
-                <p style="color:#ff5252; font-size:12px; margin-top:10px;">如遇账号锁定，请联系我解锁：</p>
+                <p>验证通过，请在 App Store 登录（严禁在设置登录iCloud）：</p>
+                <p style="color:#333;">账号：2143742498@qq.com</p>
+                <p style="color:#333;">密码：14717515532+Xf</p>
+                <p style="color:#dc3545; font-size:13px; margin-top:12px;">如遇账号锁定，请联系客服：</p>
                 <div class="wx-qq">VX: ea7-4398</div>
                 <div class="wx-qq">QQ: 2143742498</div>
             </div>
@@ -134,45 +136,45 @@
 
         <!-- 声明 -->
         <div class="notice">
-            <strong>⚠️ 严正声明与防坑指南：</strong><br>
-            1. <b>严禁倒卖：</b>本页面及教程为独家原创整理，仅限个人学习使用。严禁二次售卖、倒卖或公开传播！一旦发现，直接封禁IP并追究责任。<br>
-            2. <b>外区账号：</b>iOS需要登录外国账号下载。没有的请自己动手注册。懒得动手的，直接找我借（已含在收费项中）。<br>
-            3. 安装未知应用时，手机提示“有风险”属于正常拦截，允许安装即可。<br>
+            <strong>重要声明与防坑指南：</strong><br>
+            1. <b>严禁倒卖：</b>本教程为独家整理，仅限个人学习。严禁二次售卖或公开传播！<br>
+            2. <b>外区账号：</b>iOS需外区账号下载。没有请自行注册，或联系客服借号。<br>
+            3. 安装未知应用时，手机提示风险属正常，允许安装即可。<br>
             4. 虚拟商品，一经发出概不退换。
         </div>
     </div>
 </div>
 
-<!-- 查看图片的全屏遮罩层 (点击关闭) -->
+<!-- 全屏看图遮罩层 -->
 <div id="image-viewer" onclick="closeImage()">
     <div class="close-img">×</div>
-    <img id="full-img" src="" alt="高清教程">
-    <div style="text-align:center; color:#888; font-size:12px; padding:20px; padding-bottom:50px;">👆 长按图片即可保存到手机相册</div>
+    <!-- 如果加载失败，会显示提示文字 -->
+    <img id="full-img" src="" alt="教程加载失败，请检查网络" style="margin-top:50px;">
+    <div style="text-align:center; color:#aaa; font-size:14px; padding:20px; padding-bottom:50px;">长按图片可保存到相册</div>
 </div>
 
 <!-- 二级验证弹窗 -->
 <div id="pwd-modal" class="modal">
     <div class="modal-content">
         <span class="close-btn" onclick="closeModal()">×</span>
-        <h2 id="modal-title" style="margin-bottom:15px; font-size:18px;">请输入解锁密码</h2>
+        <h2 id="modal-title" style="margin-bottom:20px; font-size:18px; color:#333;">请输入解锁密码</h2>
         <input type="password" id="sub-pwd" placeholder="请联系客服获取" style="margin-bottom:15px;">
         <button onclick="verifySubPwd()">确认解锁</button>
         <p class="error-msg" id="sub-error" style="text-align:center;">密码错误，请联系客服购买</p>
-        <div style="margin-top:15px; font-size:12px; color:#888;">
-            需要密码？联系我：<br>
-            <span style="color:#ff9800;">VX: ea7-4398 / QQ: 2143742498</span>
+        <div style="margin-top:20px; font-size:13px; color:#666;">
+            购买密码请联系：<br>
+            <span style="color:#dc3545; font-weight:bold;">VX: ea7-4398 / QQ: 2143742498</span>
         </div>
     </div>
 </div>
 
 <script>
-    // ================= 🔐 密码设置区 =================
-    const MAIN_PASSWORD = "520439";       // 进入网页的主密码
-    const PSPLAY_PASSWORD = "2006xf";     // 获取破解版PSPlay的密码
-    const IOS_PASSWORD = "xf2006";        // 获取iOS港服账号的密码
-    // ==================================================
+    // ================= 密码设置区 =================
+    const MAIN_PASSWORD = "520439";       // 主密码
+    const PSPLAY_PASSWORD = "2006xf";     // PSPlay密码
+    const IOS_PASSWORD = "xf2006";        // iOS密码
+    // ==============================================
 
-    // 验证主密码
     function checkMainPwd() {
         const pwd = document.getElementById('main-pwd').value;
         if (pwd === MAIN_PASSWORD) {
@@ -185,18 +187,16 @@
     }
     document.getElementById('main-pwd').addEventListener('keypress', function (e) { if (e.key === 'Enter') checkMainPwd(); });
 
-    // 弹窗控制
     let currentModalType = '';
     function openModal(type) {
         currentModalType = type;
         document.getElementById('pwd-modal').style.display = 'flex';
-        document.getElementById('modal-title').innerText = type === 'psplay' ? '解锁 PSPlay 破解版' : '解锁 iOS 港服账号';
+        document.getElementById('modal-title').innerText = type === 'psplay' ? '解锁 PSPlay 破解版' : '解锁 iOS 账号';
         document.getElementById('sub-pwd').value = '';
         document.getElementById('sub-error').style.display = 'none';
     }
     function closeModal() { document.getElementById('pwd-modal').style.display = 'none'; }
 
-    // 验证二级密码
     function verifySubPwd() {
         const pwd = document.getElementById('sub-pwd').value;
         const errorMsg = document.getElementById('sub-error');
@@ -213,11 +213,11 @@
     }
     document.getElementById('sub-pwd').addEventListener('keypress', function (e) { if (e.key === 'Enter') verifySubPwd(); });
 
-    // 全屏看图功能
     function openImage(url) {
-        document.getElementById('full-img').src = url;
+        const img = document.getElementById('full-img');
+        img.src = url;
         document.getElementById('image-viewer').style.display = 'block';
-        document.body.style.overflow = 'hidden'; // 防止背景滚动
+        document.body.style.overflow = 'hidden';
     }
     function closeImage() {
         document.getElementById('image-viewer').style.display = 'none';
