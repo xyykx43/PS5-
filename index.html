@@ -6,13 +6,13 @@
     <title>VIP 专属极客下载中心</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #0d0d0d; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 20px; }
-        .container { background: #1a1a1a; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; max-width: 500px; text-align: center; border: 1px solid #333; margin-top: 20px; margin-bottom: 40px;}
+        body { background-color: #0d0d0d; color: #e0e0e0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 15px; }
+        .container { background: #1a1a1a; padding: 20px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); width: 100%; max-width: 500px; text-align: center; border: 1px solid #333; margin-top: 10px; margin-bottom: 40px;}
         h1 { font-size: 20px; margin-bottom: 10px; color: #ffffff; letter-spacing: 2px; }
-        p.subtitle { font-size: 13px; color: #888; margin-bottom: 25px; }
+        p.subtitle { font-size: 13px; color: #888; margin-bottom: 20px; }
         
         .input-group { display: flex; flex-direction: column; gap: 15px; }
-        input[type="password"], input[type="text"] { width: 100%; padding: 14px; background: #222; border: 1px solid #444; border-radius: 8px; color: #fff; font-size: 16px; text-align: center; outline: none; }
+        input[type="password"] { width: 100%; padding: 14px; background: #222; border: 1px solid #444; border-radius: 8px; color: #fff; font-size: 16px; text-align: center; outline: none; }
         button { padding: 14px; background: #ffffff; color: #121212; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: 0.2s; width: 100%;}
         button:active { transform: scale(0.97); background: #ccc; }
         .error-msg { color: #ff5252; font-size: 13px; margin-top: 10px; display: none; }
@@ -22,16 +22,28 @@
         
         .section-title { font-size: 14px; color: #aaa; margin: 20px 0 10px 0; border-left: 3px solid #4CAF50; padding-left: 8px; font-weight: bold; }
         
-        /* 教程图片 */
-        .img-box { margin-bottom: 15px; text-align: center; }
-        .img-box img { width: 100%; border-radius: 8px; border: 1px solid #333; margin-bottom: 8px; }
-        .img-tip { font-size: 12px; color: #666; text-align: center; margin-bottom: 20px; }
-
-        /* 按钮组 */
-        .action-item { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px;}
+        /* 菜单列表样式 */
+        .menu-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
+        .menu-item { 
+            background: #222; 
+            padding: 16px; 
+            border-radius: 8px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            cursor: pointer;
+            border: 1px solid #333;
+            transition: background 0.2s;
+        }
+        .menu-item:active { background: #2a2a2a; }
+        .menu-item span { font-size: 15px; color: #fff; font-weight: bold; }
+        .menu-item .arrow { color: #666; font-size: 16px; font-weight: bold; }
+        
+        /* 软件下载区卡片 */
+        .action-item { background: #222; padding: 15px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 10px; border: 1px solid #333;}
         .action-item span { font-size: 14px; color: #ccc; font-weight: bold; }
-        .btn-green { background: #4CAF50; color: white; }
-        .btn-blue { background: #2196F3; color: white; }
+        
+        .btn-blue { background: #2196F3; color: white; text-decoration: none; padding: 12px; border-radius: 5px; font-size: 14px; display: block; text-align: center; font-weight: bold;}
         .btn-orange { background: #FF9800; color: white; }
 
         /* 防止倒卖声明 */
@@ -46,6 +58,11 @@
         .hidden-content { display: none; margin-top: 15px; padding: 15px; background: #111; border-radius: 8px; border: 1px dashed #4CAF50; }
         .hidden-content p { font-size: 13px; color: #4CAF50; margin-bottom: 8px; word-break: break-all;}
         .wx-qq { font-size: 15px; color: #fff; font-weight: bold; margin: 5px 0; background: #333; padding: 8px; border-radius: 5px; border-left: 3px solid #ff0055;}
+
+        /* 全屏看图 Modal */
+        #image-viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 1000; overflow-y: auto; }
+        #image-viewer img { width: 100%; display: block; }
+        .close-img { position: fixed; top: 20px; right: 20px; background: rgba(0,0,0,0.6); color: white; border-radius: 50%; width: 40px; height: 40px; line-height: 40px; text-align: center; font-size: 24px; font-weight: bold; cursor: pointer; z-index: 1001; border: 1px solid #fff;}
     </style>
 </head>
 <body>
@@ -67,42 +84,48 @@
         <h1 style="text-align: center;">✧ 资源与教程 ✧</h1>
         <p class="subtitle" style="text-align: center;">请先仔细阅读教程，再进行操作</p>
         
-        <!-- 教程图片：国内加速加载 -->
-        <div class="section-title">📖 图文保姆级教程</div>
-        <div class="img-box">
-            <!-- 使用 ghproxy 加速 GitHub 图片加载 -->
-            <img src="https://ghproxy.net/https://raw.githubusercontent.com/xyykx43/PS5-/main/ps1.png" onerror="this.src='ps1.png'" alt="本地连接教程">
-            <img src="https://ghproxy.net/https://raw.githubusercontent.com/xyykx43/PS5-/main/ps2.png" onerror="this.src='ps2.png'" alt="远程连接教程">
-            <img src="https://ghproxy.net/https://raw.githubusercontent.com/xyykx43/PS5-/main/ps3.png" onerror="this.src='ps3.png'" alt="注意事项">
+        <!-- 教程选项区 (菜单列表样式) -->
+        <div class="section-title">📖 图文保姆级教程目录</div>
+        <div class="menu-list">
+            <!-- 点击调用 openImage() 函数 -->
+            <div class="menu-item" onclick="openImage('https://raw.githubusercontent.com/xyykx43/PS5-/main/ps1.png')">
+                <span>1. 本地连接教程</span>
+                <div class="arrow">&gt;</div>
+            </div>
+            <div class="menu-item" onclick="openImage('https://raw.githubusercontent.com/xyykx43/PS5-/main/ps2.png')">
+                <span>2. 远程连接教程</span>
+                <div class="arrow">&gt;</div>
+            </div>
+            <div class="menu-item" onclick="openImage('https://raw.githubusercontent.com/xyykx43/PS5-/main/ps3.png')">
+                <span>3. 注意事项</span>
+                <div class="arrow">&gt;</div>
+            </div>
         </div>
-        <div class="img-tip">👆 长按图片可保存放大查看</div>
 
         <!-- 软件下载区 -->
         <div class="section-title">📦 核心工具下载</div>
         
         <div class="action-item">
             <span>1. Tailscale (免费组网核心)</span>
-            <a href="https://a2xz.hwxz999.com/app/202509/30/tailscale_262960.apk?tk=eJIoMYIQOEOQNYNIIMOIIAOIMUMwcIMwZIIRaxYFZ8NINAYBIweIOgOMMRy3jxTsnij3T0zzTsmijsnijxT1iiy6Cii6nhWz2sVyj5juXriii6TyT1T9" class="btn-blue" style="text-decoration:none; text-align:center; padding:10px; border-radius:5px; font-size:14px;" target="_blank">直接下载安卓版</a>
+            <a href="https://a2xz.hwxz999.com/app/202509/30/tailscale_262960.apk?tk=eJIoMYIQOEOQNYNIIMOIIAOIMUMwcIMwZIIRaxYFZ8NINAYBIweIOgOMMRy3jxTsnij3T0zzTsmijsnijxT1iiy6Cii6nhWz2sVyj5juXriii6TyT1T9" class="btn-blue" target="_blank">直接下载安卓版</a>
         </div>
 
         <div class="action-item">
             <span>2. PSPlay (安卓破解版 - 收费项)</span>
             <button class="btn-orange" onclick="openModal('psplay')">点击输入密码获取下载</button>
-            <!-- 隐藏的下载链接 -->
             <div id="psplay-unlocked" class="hidden-content">
                 <p>✅ 验证通过！点击下方链接下载：</p>
-                <a href="https://apid.kxdw.com/adown/142364/?html=2" style="color:#4CAF50; font-size:12px;" target="_blank">点击下载 PSPlay 破解版</a>
+                <a href="https://apid.kxdw.com/adown/142364/?html=2" style="color:#4CAF50; font-size:14px; word-break:break-all; font-weight:bold;" target="_blank">点击下载 PSPlay 破解版</a>
             </div>
         </div>
 
         <div class="action-item">
             <span>3. iOS 港服账号借玩 (收费项)</span>
             <button class="btn-orange" onclick="openModal('ios')">点击输入密码获取账号</button>
-            <!-- 隐藏的账号信息 -->
             <div id="ios-unlocked" class="hidden-content">
                 <p>✅ 验证通过！请使用以下账号登录 App Store（请勿在设置登录iCloud！）：</p>
-                <p>账号：2143742498@qq.com</p>
-                <p>密码：14717515532+Xf</p>
+                <p style="color:#fff;">账号：2143742498@qq.com</p>
+                <p style="color:#fff;">密码：14717515532+Xf</p>
                 <p style="color:#ff5252; font-size:12px; margin-top:10px;">如遇账号锁定，请联系我解锁：</p>
                 <div class="wx-qq">VX: ea7-4398</div>
                 <div class="wx-qq">QQ: 2143742498</div>
@@ -118,6 +141,13 @@
             4. 虚拟商品，一经发出概不退换。
         </div>
     </div>
+</div>
+
+<!-- 查看图片的全屏遮罩层 (点击关闭) -->
+<div id="image-viewer" onclick="closeImage()">
+    <div class="close-img">×</div>
+    <img id="full-img" src="" alt="高清教程">
+    <div style="text-align:center; color:#888; font-size:12px; padding:20px; padding-bottom:50px;">👆 长按图片即可保存到手机相册</div>
 </div>
 
 <!-- 二级验证弹窗 -->
@@ -136,11 +166,11 @@
 </div>
 
 <script>
-    // ================= 🔐 密码设置区（已按你的要求修改） =================
+    // ================= 🔐 密码设置区 =================
     const MAIN_PASSWORD = "520439";       // 进入网页的主密码
     const PSPLAY_PASSWORD = "2006xf";     // 获取破解版PSPlay的密码
     const IOS_PASSWORD = "xf2006";        // 获取iOS港服账号的密码
-    // =====================================================================
+    // ==================================================
 
     // 验证主密码
     function checkMainPwd() {
@@ -153,11 +183,7 @@
             document.getElementById('main-pwd').value = '';
         }
     }
-
-    // 支持回车键
-    document.getElementById('main-pwd').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') checkMainPwd();
-    });
+    document.getElementById('main-pwd').addEventListener('keypress', function (e) { if (e.key === 'Enter') checkMainPwd(); });
 
     // 弹窗控制
     let currentModalType = '';
@@ -168,16 +194,12 @@
         document.getElementById('sub-pwd').value = '';
         document.getElementById('sub-error').style.display = 'none';
     }
-
-    function closeModal() {
-        document.getElementById('pwd-modal').style.display = 'none';
-    }
+    function closeModal() { document.getElementById('pwd-modal').style.display = 'none'; }
 
     // 验证二级密码
     function verifySubPwd() {
         const pwd = document.getElementById('sub-pwd').value;
         const errorMsg = document.getElementById('sub-error');
-
         if (currentModalType === 'psplay' && pwd === PSPLAY_PASSWORD) {
             document.getElementById('psplay-unlocked').style.display = 'block';
             closeModal();
@@ -189,11 +211,19 @@
             document.getElementById('sub-pwd').value = '';
         }
     }
-    
-    // 二级密码支持回车键
-    document.getElementById('sub-pwd').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') verifySubPwd();
-    });
+    document.getElementById('sub-pwd').addEventListener('keypress', function (e) { if (e.key === 'Enter') verifySubPwd(); });
+
+    // 全屏看图功能
+    function openImage(url) {
+        document.getElementById('full-img').src = url;
+        document.getElementById('image-viewer').style.display = 'block';
+        document.body.style.overflow = 'hidden'; // 防止背景滚动
+    }
+    function closeImage() {
+        document.getElementById('image-viewer').style.display = 'none';
+        document.getElementById('full-img').src = '';
+        document.body.style.overflow = 'auto';
+    }
 </script>
 </body>
 </html>
