@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VIP 专属下载中心</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #121212;
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            background: #1e1e1e;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: #ffffff;
+            letter-spacing: 2px;
+        }
+        p.subtitle {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 30px;
+        }
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        input[type="password"] {
+            width: 100%;
+            padding: 14px;
+            background: #2a2a2a;
+            border: 1px solid #3a3a3a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 3px;
+            outline: none;
+            transition: border 0.3s;
+        }
+        input[type="password"]:focus { border-color: #e0e0e0; }
+        button {
+            padding: 14px;
+            background: #ffffff;
+            color: #121212;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s, background 0.2s;
+        }
+        button:active {
+            transform: scale(0.97);
+            background: #cccccc;
+        }
+        /* 隐藏下载区，验证成功后显示 */
+        #download-area {
+            display: none;
+            text-align: left;
+        }
+        .download-item {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .download-item span { font-size: 15px; color: #ccc; }
+        a.dl-btn {
+            background: #4CAF50;
+            color: white;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        a.dl-btn:active { background: #45a049; }
+        .notice {
+            font-size: 12px;
+            color: #ff9800;
+            background: #332200;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 20px;
+            line-height: 1.5;
+            text-align: left;
+        }
+        .error-msg {
+            color: #ff5252;
+            font-size: 14px;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 登录验证区 -->
+    <div id="login-area">
+        <h1>✧ 内部直通车 ✧</h1>
+        <p class="subtitle">仅限已购 VIP 用户访问</p>
+        <div class="input-group">
+            <input type="password" id="pwd-input" placeholder="请输入提取密码" autocomplete="off">
+            <button onclick="checkPassword()">解锁资源</button>
+        </div>
+        <p class="error-msg" id="error-msg">密码错误，请检查后重试</p>
+    </div>
+
+    <!-- 下载内容区 -->
+    <div id="download-area">
+        <h1>✧ 教程与工具 ✧</h1>
+        <p class="subtitle">感谢支持，祝你畅玩无阻</p>
+        
+        <!-- 下载选项 1：网盘教程 -->
+        <div class="download-item">
+            <span>📖 图文保姆级教程</span>
+            <!-- 把下面href里的 # 换成你的网盘链接 -->
+            <a href="#" class="dl-btn" target="_blank">点击查看</a>
+        </div>
+
+        <!-- 下载选项 2：APK 安装包 -->
+        <div class="download-item">
+            <span>📦 安卓端破解安装包</span>
+            <!-- 把下面href里的 # 换成你之后搞到的APK直链 -->
+            <a href="#" class="dl-btn" download="PxPlay.apk">点击下载</a>
+        </div>
+
+        <!-- 声明（替代之前的txt文档） -->
+        <div class="notice">
+            <strong>⚠️ 重要声明：</strong><br>
+            1. 本网页资源为独家原创整理，仅供个人学习使用，严禁倒卖、二次售卖或公开传播。<br>
+            2. 虚拟商品，一经发出概不退换。<br>
+            3. 安装过程中如遇系统拦截，请自行在手机设置中允许“未知来源应用安装”。
+        </div>
+    </div>
+</div>
+
+<script>
+    // 🔐 在这里设置你的专属密码！改成你喜欢的
+    const SECRET_PASSWORD = "123456"; 
+
+    function checkPassword() {
+        const inputPwd = document.getElementById('pwd-input').value;
+        const loginArea = document.getElementById('login-area');
+        const downloadArea = document.getElementById('download-area');
+        const errorMsg = document.getElementById('error-msg');
+
+        if (inputPwd === SECRET_PASSWORD) {
+            // 密码正确，隐藏登录区，显示下载区
+            loginArea.style.display = 'none';
+            downloadArea.style.display = 'block';
+        } else {
+            // 密码错误，提示并清空输入框
+            errorMsg.style.display = 'block';
+            document.getElementById('pwd-input').value = '';
+        }
+    }
+
+    // 支持按回车键解锁
+    document.getElementById('pwd-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            checkPassword();
+        }
+    });
+</script>
+
+</body>
+</html>
