@@ -73,6 +73,9 @@
     background-image:var(--wm);background-repeat:repeat;opacity:.13;
   }
   .shot-cap{margin-top:6px;font-size:13px;color:var(--dim);text-align:center}
+  .tut{display:flex;justify-content:space-between;align-items:center;padding:13px 2px;border-bottom:1px solid var(--line);cursor:pointer}
+  .tut:last-of-type{border-bottom:0}
+  .tut .chev{color:var(--dim);font-size:20px}
 
   /* ---------- 评论 ---------- */
   .stars{display:flex;gap:6px;font-size:26px;line-height:1;margin:6px 0}
@@ -179,37 +182,26 @@
     </div>
   </div>
 
-  <!-- 教程图 -->
+  <!-- 教程图（点开看，避免页面被 13MB 长图撑到几万像素） -->
   <h2>四、图文教程</h2>
   <div class="card">
-    <div class="shot" data-img="ps1.png" data-w="1280" data-h="22982" style="aspect-ratio:1280/22982;background-image:url('ps1.png')"></div>
-    <div class="shot-cap">图 1 · 前言与本地注册连接</div>
-
-    <div class="shot" data-img="ps2.png" data-w="1280" data-h="49929" style="aspect-ratio:1280/49929;background-image:url('ps2.png');margin-top:16px"></div>
-    <div class="shot-cap">图 2 · 远程连接注册 PS5 全过程</div>
-
-    <div class="shot" data-img="ps3.png" data-w="1280" data-h="7251" style="aspect-ratio:1280/7251;background-image:url('ps3.png');margin-top:16px"></div>
-    <div class="shot-cap">图 3 · 注意事项与常见报错</div>
-  </div>
-
-  <!-- 好评 -->
-  <h2>五、好评</h2>
-  <div class="card">
-    <div id="rate-summary" class="muted">加载中…</div>
-    <div class="stars" id="stars">
-      <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+    <div class="tut" onclick="openViewer('ps1.png',1280,22982,'图 1 · 前言与本地注册连接')">
+      <span>图 1 · 前言与本地注册连接</span><span class="chev">›</span>
     </div>
-    <div class="muted" id="rate-tip">点星星打分，帮后面的人判断</div>
+    <div class="tut" onclick="openViewer('ps2.png',1280,49929,'图 2 · 远程连接注册 PS5 全过程')">
+      <span>图 2 · 远程连接注册 PS5 全过程</span><span class="chev">›</span>
+    </div>
+    <div class="tut" onclick="openViewer('ps3.png',1280,7251,'图 3 · 注意事项与常见报错')">
+      <span>图 3 · 注意事项与常见报错</span><span class="chev">›</span>
+    </div>
+    <p class="muted" style="margin-top:10px">图片已禁止长按保存；需要原图请联系客服。</p>
   </div>
 
   <!-- 评论 -->
-  <h2>六、评论区</h2>
+  <h2>五、评论区</h2>
   <div class="card">
-    <input type="text" id="c-name" placeholder="你的昵称（最多 20 字）" maxlength="20">
-    <textarea id="c-body" rows="3" placeholder="说点什么…（最多 500 字）" maxlength="500" style="margin-top:10px"></textarea>
-    <button class="btn" id="c-send">发表评论</button>
-    <div class="err" id="c-err"></div>
-    <div id="c-list" style="margin-top:8px"></div>
+    <p class="muted">评论由 GitHub 提供。第一次发言需要用 GitHub 账号授权一次，之后可直接发。</p>
+    <div id="utterances"></div>
   </div>
 
   <div class="card muted" style="font-size:14px">
@@ -267,12 +259,7 @@
   // ---------- 云端提示 ----------
   function banner() {
     var slot = document.getElementById("banner-slot");
-    if (!CLOUD) {
-      slot.innerHTML = '<div class="banner warn">当前是<b>本地模式</b>：密码只在本机比对，评论区不可用。'
-        + '管理员请看仓库里的《部署说明.md》，配好云端后自动切到真校验。</div>';
-    } else {
-      slot.innerHTML = '<div class="banner info">密码已由云端校验，评论区已开启。</div>';
-    }
+    slot.innerHTML = '<div class="banner info">评论已接入 GitHub：点下面的「Sign in with GitHub」授权一次即可发言。</div>';
   }
 
   // ---------- 解锁 ----------
@@ -355,84 +342,23 @@
     document.getElementById("viewer-stage").style.backgroundImage = "";
     document.body.style.overflow = "";
   };
-  document.querySelectorAll(".shot").forEach(function (el) {
-    el.addEventListener("click", function () {
-      var cap = el.nextElementSibling ? el.nextElementSibling.textContent : "";
-      openViewer(el.dataset.img, el.dataset.w, el.dataset.h, cap);
-    });
-  });
 
-  // ---------- 好评 ----------
-  async function loadRating() {
-    var box = document.getElementById("rate-summary");
-    if (!CLOUD) { box.textContent = "云端未配置，好评功能暂不可用"; return; }
-    try {
-      var r = await fetch(CFG.SUPABASE_URL + "/rest/v1/rating_summary?select=*", { headers: H });
-      var d = await r.json();
-      var row = Array.isArray(d) ? d[0] : d;
-      if (!row || !row.total) { box.textContent = "还没有人打分，来当第一个"; return; }
-      box.innerHTML = "<b style='color:#fbbf24;font-size:20px'>" + row.avg_stars + "</b> 分 · "
-        + row.total + " 人评分";
-    } catch (e) { box.textContent = "评分加载失败"; }
+  // ---------- 评论（utterances） ----------
+  var loadRating = function () {};
+
+  function loadComments() {
+    var box = document.getElementById("utterances");
+    if (!box || box.dataset.loaded) return;
+    box.dataset.loaded = "1";
+    var s = document.createElement("script");
+    s.src = "https://utteranc.es/client.js";
+    s.setAttribute("repo", "xyykx43/PS5-");
+    s.setAttribute("issue-term", "pathname");
+    s.setAttribute("theme", "github-dark");
+    s.setAttribute("crossorigin", "anonymous");
+    s.async = true;
+    box.appendChild(s);
   }
-  document.querySelectorAll("#stars span").forEach(function (s) {
-    s.addEventListener("click", async function () {
-      var v = parseInt(s.dataset.v, 10);
-      document.querySelectorAll("#stars span").forEach(function (x) {
-        x.classList.toggle("on", parseInt(x.dataset.v, 10) <= v);
-      });
-      var tip = document.getElementById("rate-tip");
-      if (!CLOUD) { tip.textContent = "云端未配置，打分不会保存"; return; }
-      try {
-        var r = await fetch(CFG.SUPABASE_URL + "/rest/v1/ratings", {
-          method: "POST", headers: H, body: JSON.stringify({ stars: v })
-        });
-        if (!r.ok) throw new Error(r.status);
-        tip.textContent = "已记录，谢谢";
-        loadRating();
-      } catch (e) { tip.textContent = "打分失败：" + e.message; }
-    });
-  });
-
-  // ---------- 评论 ----------
-  function esc(s) {
-    return String(s).replace(/[&<>"']/g, function (c) {
-      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
-    });
-  }
-
-  async function loadComments() {
-    var list = document.getElementById("c-list");
-    if (!CLOUD) { list.innerHTML = '<div class="muted">云端未配置，评论区暂不可用</div>'; return; }
-    list.innerHTML = '<div class="muted">加载中…</div>';
-    try {
-      var r = await fetch(CFG.SUPABASE_URL + "/rest/v1/comments?select=name,body,created_at&order=created_at.desc&limit=50", { headers: H });
-      var arr = await r.json();
-      if (!Array.isArray(arr) || !arr.length) { list.innerHTML = '<div class="muted">还没有评论，来说第一句</div>'; return; }
-      list.innerHTML = arr.map(function (c) {
-        var t = (c.created_at || "").replace("T", " ").slice(0, 16);
-        return '<div class="cmt"><div class="cmt-top"><b>' + esc(c.name) + '</b><span>' + t + '</span></div>'
-          + '<div class="cmt-body">' + esc(c.body) + '</div></div>';
-      }).join("");
-    } catch (e) { list.innerHTML = '<div class="muted">评论加载失败</div>'; }
-  }
-
-  document.getElementById("c-send").onclick = async function () {
-    var err = document.getElementById("c-err");
-    var name = document.getElementById("c-name").value.trim();
-    var body = document.getElementById("c-body").value.trim();
-    err.textContent = "";
-    if (!name || !body) { err.textContent = "昵称和内容都要填"; return; }
-    if (!CLOUD) { err.textContent = "云端未配置，评论发不出去"; return; }
-    try {
-      var r = await fetch(CFG.SUPABASE_URL + "/rest/v1/comments", {
-        method: "POST", headers: H, body: JSON.stringify({ name: name, body: body })
-      });
-      if (!r.ok) throw new Error(r.status);
-      document.getElementById("c-body").value = "";
-      loadComments();
-    } catch (e) { err.textContent = "发送失败：" + e.message; }
-  };
 
   // ---------- 防存图 ----------
   ["contextmenu", "dragstart", "selectstart"].forEach(function (ev) {
