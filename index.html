@@ -1,229 +1,454 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VIP 专属资源下载中心</title>
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-        body { background-color: #f5f5f5; color: #333; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; padding: 15px; }
-        .container { background: #ffffff; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); width: 100%; max-width: 500px; text-align: center; border: 1px solid #e0e0e0; margin-top: 10px; margin-bottom: 40px;}
-        h1 { font-size: 22px; margin-bottom: 10px; color: #111; font-weight: 600; }
-        p.subtitle { font-size: 14px; color: #666; margin-bottom: 25px; }
-        
-        .input-group { display: flex; flex-direction: column; gap: 15px; }
-        input[type="password"] { width: 100%; padding: 14px; background: #f9f9f9; border: 1px solid #ccc; border-radius: 8px; color: #333; font-size: 16px; text-align: center; outline: none; }
-        input[type="password"]:focus { border-color: #007bff; }
-        button { padding: 14px; background: #007bff; color: #ffffff; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.2s; width: 100%;}
-        button:active { transform: scale(0.98); background: #0056b3; }
-        .error-msg { color: #dc3545; font-size: 14px; margin-top: 10px; display: none; }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f1115">
+<title>PS5 远程串流 · 资源下载中心</title>
+<style>
+  :root{
+    --bg:#0f1115; --card:#181b22; --line:#272c37; --text:#e8eaf0;
+    --dim:#9aa3b2; --accent:#3b82f6; --btn:#2563eb; --warn:#f59e0b; --ok:#22c55e; --bad:#ef4444;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--text); padding-bottom:48px;
+    font:16px/1.65 -apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC","Microsoft YaHei",sans-serif;
+    -webkit-user-select:none; user-select:none;
+  }
+  .wrap{max-width:720px;margin:0 auto;padding:0 16px}
+  h1{font-size:20px;margin:0 0 6px}
+  h2{font-size:17px;margin:0 0 12px;padding-left:10px;border-left:3px solid var(--accent)}
+  p{margin:8px 0}
+  a{color:#7db4ff}
+  .muted{color:var(--dim);font-size:14px}
 
-        /* 主内容区 */
-        #main-area { display: none; text-align: left; }
-        
-        .section-title { font-size: 16px; color: #333; margin: 25px 0 15px 0; border-left: 4px solid #007bff; padding-left: 10px; font-weight: 600; }
-        
-        /* 菜单列表样式 */
-        .menu-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px; }
-        .menu-item { 
-            background: #f8f9fa; 
-            padding: 16px; 
-            border-radius: 8px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            cursor: pointer;
-            border: 1px solid #e9ecef;
-            transition: background 0.2s;
-        }
-        .menu-item:active { background: #e2e6ea; }
-        .menu-item span { font-size: 15px; color: #333; font-weight: 500; }
-        .menu-item .arrow { color: #aaa; font-size: 16px; }
-        
-        /* 软件下载区卡片 */
-        .action-item { background: #f8f9fa; padding: 16px; border-radius: 8px; margin-bottom: 12px; display: flex; flex-direction: column; gap: 12px; border: 1px solid #e9ecef;}
-        .action-item span { font-size: 15px; color: #333; font-weight: 500; }
-        
-        .btn-blue { background: #17a2b8; color: white; text-decoration: none; padding: 12px; border-radius: 6px; font-size: 15px; display: block; text-align: center; font-weight: 600;}
-        .btn-orange { background: #fd7e14; color: white; }
-        .btn-orange:active { background: #e36a0b; }
+  /* ---------- 密码门 ---------- */
+  #gate{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:24px;z-index:100}
+  .gate-box{width:100%;max-width:340px;text-align:center}
+  .gate-box h1{font-size:22px}
+  input[type=password],input[type=text],textarea{
+    width:100%;padding:13px 14px;border-radius:10px;border:1px solid var(--line);
+    background:#11141a;color:var(--text);font-size:16px;outline:none;font-family:inherit;
+    -webkit-user-select:text;user-select:text;
+  }
+  input:focus,textarea:focus{border-color:var(--accent)}
+  .btn{
+    width:100%;margin-top:12px;padding:13px;border:0;border-radius:10px;
+    background:var(--btn);color:#fff;font-size:16px;font-weight:600;cursor:pointer;
+  }
+  .btn:disabled{opacity:.55}
+  .btn.ghost{background:#232a36;color:var(--text)}
+  .err{color:var(--bad);font-size:14px;margin-top:10px;min-height:20px}
 
-        /* 声明 */
-        .notice { font-size: 13px; color: #856404; background: #fff3cd; padding: 16px; border-radius: 8px; margin-top: 25px; line-height: 1.6; border: 1px solid #ffeeba; }
-        
-        /* 弹窗 Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 999; justify-content: center; align-items: center; padding: 20px; }
-        .modal-content { background: #ffffff; width: 100%; max-width: 350px; padding: 25px; border-radius: 12px; text-align: center; position: relative;}
-        .close-btn { position: absolute; top: 15px; right: 15px; color: #999; font-size: 24px; cursor: pointer; }
-        
-        /* 隐藏的解密区域 */
-        .hidden-content { display: none; margin-top: 15px; padding: 15px; background: #e8f5e9; border-radius: 8px; border: 1px solid #c8e6c9; }
-        .hidden-content p { font-size: 14px; color: #2e7d32; margin-bottom: 8px; word-break: break-all;}
-        .wx-qq { font-size: 15px; color: #333; font-weight: 600; margin: 6px 0; background: #f1f1f1; padding: 10px; border-radius: 6px; border-left: 4px solid #dc3545;}
+  /* ---------- 通用卡片 ---------- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}
+  .banner{border-radius:12px;padding:12px 14px;font-size:14px;margin:12px 0;border:1px solid}
+  .banner.warn{background:rgba(245,158,11,.1);border-color:rgba(245,158,11,.4);color:#fcd34d}
+  .banner.info{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.35);color:#a9c8ff}
 
-        /* 全屏看图 */
-        #image-viewer { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; overflow-y: auto; }
-        #image-viewer img { width: 100%; display: block; margin: 0 auto; }
-        .close-img { position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.2); color: white; border-radius: 50%; width: 40px; height: 40px; line-height: 40px; text-align: center; font-size: 24px; font-weight: bold; cursor: pointer; z-index: 1001; }
-    </style>
+  /* ---------- 下载卡 ---------- */
+  .dl{display:flex;flex-direction:column;gap:10px}
+  .dl-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+  .dl-name{font-weight:600;font-size:15px}
+  .tag{font-size:12px;padding:2px 8px;border-radius:999px;background:#232a36;color:var(--dim);white-space:nowrap}
+  .tag.ok{background:rgba(34,197,94,.15);color:#86efac}
+  .tag.warn{background:rgba(245,158,11,.15);color:#fcd34d}
+  .dl a.go,.dl button.go{
+    display:block;text-align:center;padding:12px;border-radius:10px;border:0;
+    background:var(--btn);color:#fff;font-weight:600;font-size:15px;text-decoration:none;cursor:pointer;
+  }
+  .dl a.alt{display:block;text-align:center;padding:10px;border-radius:10px;border:1px solid var(--line);color:var(--dim);font-size:14px;text-decoration:none}
+  .hidden{display:none}
+
+  /* ---------- 教程图（防长按保存） ---------- */
+  .shot{
+    position:relative;width:100%;border-radius:12px;overflow:hidden;cursor:zoom-in;
+    background-color:#0a0c10;background-repeat:no-repeat;background-size:100% 100%;
+    -webkit-touch-callout:none;-webkit-user-drag:none;
+  }
+  .shot::after,.wm{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background-image:var(--wm);background-repeat:repeat;opacity:.13;
+  }
+  .shot-cap{margin-top:6px;font-size:13px;color:var(--dim);text-align:center}
+
+  /* ---------- 评论 ---------- */
+  .stars{display:flex;gap:6px;font-size:26px;line-height:1;margin:6px 0}
+  .stars span{cursor:pointer;color:#4b5563;transition:color .15s}
+  .stars span.on{color:#fbbf24}
+  .cmt{border-bottom:1px solid var(--line);padding:10px 0}
+  .cmt:last-child{border-bottom:0}
+  .cmt-top{display:flex;justify-content:space-between;font-size:13px;color:var(--dim);margin-bottom:4px}
+  .cmt-body{font-size:15px;word-break:break-word}
+
+  /* ---------- 看图 ---------- */
+  #viewer{position:fixed;inset:0;background:#000;z-index:200;overflow:auto;display:none}
+  #viewer.on{display:block}
+  #viewer .bar{position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:rgba(0,0,0,.85);color:#ddd;font-size:14px;z-index:2}
+  #viewer .bar button{background:#222;border:0;color:#fff;padding:8px 14px;border-radius:8px;font-size:14px}
+  #viewer .stage{position:relative;width:100%;background-repeat:no-repeat;background-size:100% 100%}
+</style>
 </head>
 <body>
 
-<div class="container">
-    <!-- 密码验证区 -->
-    <div id="login-area">
-        <h1>VIP 专属下载中心</h1>
-        <p class="subtitle">请凭提取密码访问</p>
-        <div class="input-group">
-            <input type="password" id="main-pwd" placeholder="请输入提取密码" autocomplete="off">
-            <button onclick="checkMainPwd()">解锁资源</button>
-        </div>
-        <p class="error-msg" id="main-error">密码错误，请检查后重试</p>
-    </div>
-
-    <!-- 解锁后的主内容区 -->
-    <div id="main-area">
-        <h1>资源与教程</h1>
-        <p class="subtitle">请先阅读教程，再进行操作</p>
-        
-        <!-- 教程目录 -->
-        <div class="section-title">图文教程目录</div>
-        <div class="menu-list">
-            <!-- 注意这里：使用了 jsDelivr 加速器加载图片 -->
-            <div class="menu-item" onclick="openImage('https://cdn.jsdelivr.net/gh/xyykx43/PS5-@main/ps1.png')">
-                <span>1. 本地连接教程</span>
-                <div class="arrow">&gt;</div>
-            </div>
-            <div class="menu-item" onclick="openImage('https://cdn.jsdelivr.net/gh/xyykx43/PS5-@main/ps2.png')">
-                <span>2. 远程连接教程</span>
-                <div class="arrow">&gt;</div>
-            </div>
-            <div class="menu-item" onclick="openImage('https://cdn.jsdelivr.net/gh/xyykx43/PS5-@main/ps3.png')">
-                <span>3. 注意事项说明</span>
-                <div class="arrow">&gt;</div>
-            </div>
-        </div>
-
-        <!-- 软件下载区 -->
-        <div class="section-title">核心工具下载</div>
-        
-        <div class="action-item">
-            <span>1. Tailscale (免费组网)</span>
-            <a href="https://a2xz.hwxz999.com/app/202509/30/tailscale_262960.apk?tk=eJIoMYIQOEOQNYNIIMOIIAOIMUMwcIMwZIIRaxYFZ8NINAYBIweIOgOMMRy3jxTsnij3T0zzTsmijsnijxT1iiy6Cii6nhWz2sVyj5juXriii6TyT1T9" class="btn-blue" target="_blank">下载安卓版</a>
-        </div>
-
-        <div class="action-item">
-            <span>2. PSPlay (安卓破解版)</span>
-            <button class="btn-orange" onclick="openModal('psplay')">输入密码获取下载</button>
-            <div id="psplay-unlocked" class="hidden-content">
-                <p>验证通过，请点击下方下载：</p>
-                <a href="https://apid.kxdw.com/adown/142364/?html=2" style="color:#0056b3; font-size:15px; word-break:break-all; font-weight:bold; text-decoration:none;" target="_blank">点击下载 PSPlay 破解版</a>
-            </div>
-        </div>
-
-        <div class="action-item">
-            <span>3. iOS 港服账号借玩</span>
-            <button class="btn-orange" onclick="openModal('ios')">输入密码获取账号</button>
-            <div id="ios-unlocked" class="hidden-content">
-                <p>验证通过，请在 App Store 登录（严禁在设置登录iCloud）：</p>
-                <p style="color:#333;">账号：2143742498@qq.com</p>
-                <p style="color:#333;">密码：14717515532+Xf</p>
-                <p style="color:#dc3545; font-size:13px; margin-top:12px;">如遇账号锁定，请联系客服：</p>
-                <div class="wx-qq">VX: ea7-4398</div>
-                <div class="wx-qq">QQ: 2143742498</div>
-            </div>
-        </div>
-
-        <!-- 声明 -->
-        <div class="notice">
-            <strong>重要声明与防坑指南：</strong><br>
-            1. <b>严禁倒卖：</b>本教程为独家整理，仅限个人学习。严禁二次售卖或公开传播！<br>
-            2. <b>外区账号：</b>iOS需外区账号下载。没有请自行注册，或联系客服借号。<br>
-            3. 安装未知应用时，手机提示风险属正常，允许安装即可。<br>
-            4. 虚拟商品，一经发出概不退换。
-        </div>
-    </div>
+<!-- ================= 密码门 ================= -->
+<div id="gate">
+  <div class="gate-box">
+    <h1>资源下载中心</h1>
+    <p class="muted">请凭提取密码访问</p>
+    <input type="password" id="pwd" placeholder="请输入提取密码" autocomplete="off" autocapitalize="off">
+    <button class="btn" id="gate-btn">进入</button>
+    <div class="err" id="gate-err"></div>
+    <p class="muted" style="font-size:13px">忘记密码请联系客服：VX ea7-4398</p>
+  </div>
 </div>
 
-<!-- 全屏看图遮罩层 -->
-<div id="image-viewer" onclick="closeImage()">
-    <div class="close-img">×</div>
-    <!-- 如果加载失败，会显示提示文字 -->
-    <img id="full-img" src="" alt="教程加载失败，请检查网络" style="margin-top:50px;">
-    <div style="text-align:center; color:#aaa; font-size:14px; padding:20px; padding-bottom:50px;">长按图片可保存到相册</div>
-</div>
+<!-- ================= 主体 ================= -->
+<div id="app" class="wrap hidden" style="padding-top:16px">
+  <h1>PS5 远程串流 · 资源下载中心</h1>
+  <p class="muted">工具、教程、常见问题，一次说清</p>
 
-<!-- 二级验证弹窗 -->
-<div id="pwd-modal" class="modal">
-    <div class="modal-content">
-        <span class="close-btn" onclick="closeModal()">×</span>
-        <h2 id="modal-title" style="margin-bottom:20px; font-size:18px; color:#333;">请输入解锁密码</h2>
-        <input type="password" id="sub-pwd" placeholder="请联系客服获取" style="margin-bottom:15px;">
-        <button onclick="verifySubPwd()">确认解锁</button>
-        <p class="error-msg" id="sub-error" style="text-align:center;">密码错误，请联系客服购买</p>
-        <div style="margin-top:20px; font-size:13px; color:#666;">
-            购买密码请联系：<br>
-            <span style="color:#dc3545; font-weight:bold;">VX: ea7-4398 / QQ: 2143742498</span>
-        </div>
+  <div id="banner-slot"></div>
+
+  <!-- 教程 -->
+  <h2>一、你需要什么</h2>
+  <div class="card">
+    <p><b>PSPlay</b>（或 PXPlay / MirrorPlay）：串流软件，安卓可用破解版，iOS 需自行购买正版。</p>
+    <p><b>Tailscale</b>：免费组网工具，把你在外面的设备和家里的 PS5 拉进同一个虚拟内网。</p>
+    <p><b>一个 Tailscale 账号</b>：用 Google / GitHub / 微软 / 苹果账号都能登录。</p>
+    <p class="muted">前提：家里的网络最好是 NAT1 或 NAT2（PS5 设置 → 网络 → 查看连接状态 里能看到）。</p>
+  </div>
+
+  <!-- Tailscale 登录地址（用户要求写进页面） -->
+  <h2>二、Tailscale 登录与后台地址</h2>
+  <div class="card">
+    <p>打开 Tailscale App 点「Connect to VPN」后如果不知道去哪登录，直接手动打开这个入口：</p>
+    <p style="font-size:15px;word-break:break-all"><a href="https://login.tailscale.com" target="_blank" rel="noopener">https://login.tailscale.com</a></p>
+    <p>登录方式任选其一，教程推荐用 GitHub：</p>
+    <p class="muted">
+      · Sign in with Google<br>
+      · Sign in with Microsoft<br>
+      · Sign in with GitHub（推荐，需先有 GitHub 账号）<br>
+      · Sign in with Apple<br>
+      · Sign in with a passkey<br>
+      · 或直接用邮箱收验证码 / 扫二维码
+    </p>
+    <p style="margin-top:12px">授权跑完、设备出现在列表之后，<b>必须去后台批准网段</b>，否则等于没开：</p>
+    <p style="font-size:15px;word-break:break-all"><a href="https://login.tailscale.com/admin/machines" target="_blank" rel="noopener">https://login.tailscale.com/admin/machines</a></p>
+    <p class="muted">进后台 → 找到当基站的设备 → 右边三个点 → Edit route settings → 勾上 <b>192.168.1.0/24</b> → Save。</p>
+  </div>
+
+  <!-- 下载 -->
+  <h2>三、下载区</h2>
+
+  <div class="card dl">
+    <div class="dl-head">
+      <div class="dl-name">1. Tailscale</div>
+      <span class="tag ok">免费</span>
     </div>
+    <div class="muted">安卓装 APK；iOS 需外区 App Store 账号（或联系我们借号）。</div>
+    <a class="go" href="https://tailscale.com/download" target="_blank" rel="noopener">打开官方下载页</a>
+    <a class="alt" href="https://a2xz.hwxz999.com/app/202509/30/tailscale_262960.apk?tk=eJIoMYIQOEOQNYNIIMOIIAOIMUMwcIMwZIIRaxYFZ8NINAYBIweIOgOMMRy3jxTsnij3T0zzTsmijsnijxT1iiy6Cii6nhWz2sVyj5juXriii6TyT1T9" target="_blank" rel="noopener">安卓 APK 备用下载（第三方源）</a>
+  </div>
+
+  <div class="card dl">
+    <div class="dl-head">
+      <div class="dl-name">2. PSPlay（安卓破解版）</div>
+      <span class="tag warn">第三方源</span>
+    </div>
+    <div class="muted">装之前手机可能提示风险，属正常。介意的话去 Google Play 买正版。</div>
+    <button class="go" onclick="openSub('psplay')">输入密码获取下载</button>
+    <div id="sub-psplay" class="hidden">
+      <a class="go" style="margin-top:8px" href="https://apid.kxdw.com/adown/142364/?html=2" target="_blank" rel="noopener">点击下载 PSPlay 破解版</a>
+    </div>
+  </div>
+
+  <div class="card dl">
+    <div class="dl-head">
+      <div class="dl-name">3. iOS 港服账号（借玩）</div>
+      <span class="tag warn">请勿外传</span>
+    </div>
+    <div class="muted">只在 App Store 登录，<b>严禁</b>在「设置 → iCloud」登录，否则会锁机。</div>
+    <button class="go" onclick="openSub('ios')">输入密码获取账号</button>
+    <div id="sub-ios" class="hidden">
+      <p style="margin-top:10px">账号：2143742498@qq.com</p>
+      <p>密码：14717515532+Xf</p>
+      <p class="muted" style="color:var(--bad)">如遇账号锁定，联系客服 VX ea7-4398 / QQ 2143742498</p>
+    </div>
+  </div>
+
+  <!-- 教程图 -->
+  <h2>四、图文教程</h2>
+  <div class="card">
+    <div class="shot" data-img="ps1.png" data-w="1280" data-h="22982" style="aspect-ratio:1280/22982;background-image:url('ps1.png')"></div>
+    <div class="shot-cap">图 1 · 前言与本地注册连接</div>
+
+    <div class="shot" data-img="ps2.png" data-w="1280" data-h="49929" style="aspect-ratio:1280/49929;background-image:url('ps2.png');margin-top:16px"></div>
+    <div class="shot-cap">图 2 · 远程连接注册 PS5 全过程</div>
+
+    <div class="shot" data-img="ps3.png" data-w="1280" data-h="7251" style="aspect-ratio:1280/7251;background-image:url('ps3.png');margin-top:16px"></div>
+    <div class="shot-cap">图 3 · 注意事项与常见报错</div>
+  </div>
+
+  <!-- 好评 -->
+  <h2>五、好评</h2>
+  <div class="card">
+    <div id="rate-summary" class="muted">加载中…</div>
+    <div class="stars" id="stars">
+      <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+    </div>
+    <div class="muted" id="rate-tip">点星星打分，帮后面的人判断</div>
+  </div>
+
+  <!-- 评论 -->
+  <h2>六、评论区</h2>
+  <div class="card">
+    <input type="text" id="c-name" placeholder="你的昵称（最多 20 字）" maxlength="20">
+    <textarea id="c-body" rows="3" placeholder="说点什么…（最多 500 字）" maxlength="500" style="margin-top:10px"></textarea>
+    <button class="btn" id="c-send">发表评论</button>
+    <div class="err" id="c-err"></div>
+    <div id="c-list" style="margin-top:8px"></div>
+  </div>
+
+  <div class="card muted" style="font-size:14px">
+    <b style="color:var(--text)">声明：</b>
+    本页为个人整理，仅供学习交流，严禁二次售卖或公开传播。
+    软件与账号均来自第三方，风险自担。虚拟商品一经发出概不退换。
+  </div>
 </div>
 
+<!-- ================= 二级密码弹窗 ================= -->
+<div id="sub-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:150;align-items:center;justify-content:center;padding:24px">
+  <div class="card" style="width:100%;max-width:340px;margin:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <b id="sub-title">请输入解锁密码</b>
+      <span style="cursor:pointer;color:var(--dim);font-size:22px" onclick="closeSub()">×</span>
+    </div>
+    <input type="password" id="sub-pwd" placeholder="请联系客服获取">
+    <button class="btn" onclick="verifySub()">确认解锁</button>
+    <div class="err" id="sub-err"></div>
+    <p class="muted" style="font-size:13px;margin-top:10px">购买密码请联系 VX ea7-4398 / QQ 2143742498</p>
+  </div>
+</div>
+
+<!-- ================= 看图 ================= -->
+<div id="viewer">
+  <div class="bar"><span id="viewer-cap"></span><button onclick="closeViewer()">关闭</button></div>
+  <div class="stage" id="viewer-stage"></div>
+</div>
+
+<script src="config.js"></script>
 <script>
-    // ================= 密码设置区 =================
-    const MAIN_PASSWORD = "520439";       // 主密码
-    const PSPLAY_PASSWORD = "2006xf";     // PSPlay密码
-    const IOS_PASSWORD = "xf2006";        // iOS密码
-    // ==============================================
+(function () {
+  var CFG = window.SITE_CONFIG || {};
+  var CLOUD = !!(CFG.SUPABASE_URL && CFG.SUPABASE_ANON_KEY);
+  var H = CLOUD ? {
+    "apikey": CFG.SUPABASE_ANON_KEY,
+    "Authorization": "Bearer " + CFG.SUPABASE_ANON_KEY,
+    "Content-Type": "application/json"
+  } : null;
 
-    function checkMainPwd() {
-        const pwd = document.getElementById('main-pwd').value;
-        if (pwd === MAIN_PASSWORD) {
-            document.getElementById('login-area').style.display = 'none';
-            document.getElementById('main-area').style.display = 'block';
-        } else {
-            document.getElementById('main-error').style.display = 'block';
-            document.getElementById('main-pwd').value = '';
-        }
-    }
-    document.getElementById('main-pwd').addEventListener('keypress', function (e) { if (e.key === 'Enter') checkMainPwd(); });
+  // ---------- 水印 ----------
+  function makeWatermark() {
+    var c = document.createElement("canvas");
+    c.width = 300; c.height = 160;
+    var x = c.getContext("2d");
+    x.fillStyle = "#fff";
+    x.font = "18px sans-serif";
+    x.translate(150, 80); x.rotate(-0.35);
+    x.textAlign = "center";
+    x.fillText("PS5- xyykx43", 0, 0);
+    document.documentElement.style.setProperty("--wm", "url(" + c.toDataURL() + ")");
+  }
+  makeWatermark();
 
-    let currentModalType = '';
-    function openModal(type) {
-        currentModalType = type;
-        document.getElementById('pwd-modal').style.display = 'flex';
-        document.getElementById('modal-title').innerText = type === 'psplay' ? '解锁 PSPlay 破解版' : '解锁 iOS 账号';
-        document.getElementById('sub-pwd').value = '';
-        document.getElementById('sub-error').style.display = 'none';
+  // ---------- 云端提示 ----------
+  function banner() {
+    var slot = document.getElementById("banner-slot");
+    if (!CLOUD) {
+      slot.innerHTML = '<div class="banner warn">当前是<b>本地模式</b>：密码只在本机比对，评论区不可用。'
+        + '管理员请看仓库里的《部署说明.md》，配好云端后自动切到真校验。</div>';
+    } else {
+      slot.innerHTML = '<div class="banner info">密码已由云端校验，评论区已开启。</div>';
     }
-    function closeModal() { document.getElementById('pwd-modal').style.display = 'none'; }
+  }
 
-    function verifySubPwd() {
-        const pwd = document.getElementById('sub-pwd').value;
-        const errorMsg = document.getElementById('sub-error');
-        if (currentModalType === 'psplay' && pwd === PSPLAY_PASSWORD) {
-            document.getElementById('psplay-unlocked').style.display = 'block';
-            closeModal();
-        } else if (currentModalType === 'ios' && pwd === IOS_PASSWORD) {
-            document.getElementById('ios-unlocked').style.display = 'block';
-            closeModal();
-        } else {
-            errorMsg.style.display = 'block';
-            document.getElementById('sub-pwd').value = '';
-        }
-    }
-    document.getElementById('sub-pwd').addEventListener('keypress', function (e) { if (e.key === 'Enter') verifySubPwd(); });
+  // ---------- 解锁 ----------
+  async function sha256(s) {
+    var b = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+    return Array.from(new Uint8Array(b)).map(function (n) { return n.toString(16).padStart(2, "0"); }).join("");
+  }
 
-    function openImage(url) {
-        const img = document.getElementById('full-img');
-        img.src = url;
-        document.getElementById('image-viewer').style.display = 'block';
-        document.body.style.overflow = 'hidden';
+  async function checkPassword(pwd) {
+    if (CLOUD) {
+      var r = await fetch(CFG.SUPABASE_URL + "/rest/v1/rpc/check_access", {
+        method: "POST", headers: H, body: JSON.stringify({ p: pwd })
+      });
+      if (!r.ok) throw new Error("云端返回 " + r.status);
+      return await r.json() === true;
     }
-    function closeImage() {
-        document.getElementById('image-viewer').style.display = 'none';
-        document.getElementById('full-img').src = '';
-        document.body.style.overflow = 'auto';
+    return (await sha256(pwd)) === CFG.LOCAL_PASSWORD_SHA256;
+  }
+
+  async function unlock() {
+    var btn = document.getElementById("gate-btn");
+    var err = document.getElementById("gate-err");
+    var pwd = document.getElementById("pwd").value.trim();
+    if (!pwd) { err.textContent = "请输入密码"; return; }
+    btn.disabled = true; err.textContent = "验证中…";
+    try {
+      if (await checkPassword(pwd)) {
+        sessionStorage.setItem("ps5-ok", "1");
+        document.getElementById("gate").style.display = "none";
+        document.getElementById("app").classList.remove("hidden");
+        banner();
+        loadRating(); loadComments();
+      } else {
+        err.textContent = "密码错误，请检查后重试";
+        document.getElementById("pwd").value = "";
+      }
+    } catch (e) {
+      err.textContent = "验证失败：" + e.message;
     }
+    btn.disabled = false;
+  }
+  document.getElementById("gate-btn").onclick = unlock;
+  document.getElementById("pwd").addEventListener("keydown", function (e) { if (e.key === "Enter") unlock(); });
+
+  // ---------- 二级密码 ----------
+  var SUBPWD = { psplay: "2006xf", ios: "xf2006" };
+  var subType = "";
+  window.openSub = function (t) {
+    subType = t;
+    document.getElementById("sub-title").textContent = t === "psplay" ? "解锁 PSPlay 下载" : "解锁 iOS 账号";
+    document.getElementById("sub-pwd").value = "";
+    document.getElementById("sub-err").textContent = "";
+    document.getElementById("sub-modal").style.display = "flex";
+  };
+  window.closeSub = function () { document.getElementById("sub-modal").style.display = "none"; };
+  window.verifySub = function () {
+    var v = document.getElementById("sub-pwd").value.trim();
+    if (v === SUBPWD[subType]) {
+      document.getElementById("sub-" + subType).classList.remove("hidden");
+      closeSub();
+    } else {
+      document.getElementById("sub-err").textContent = "密码错误，请联系客服购买";
+      document.getElementById("sub-pwd").value = "";
+    }
+  };
+  document.getElementById("sub-pwd").addEventListener("keydown", function (e) { if (e.key === "Enter") verifySub(); });
+
+  // ---------- 看图 ----------
+  window.openViewer = function (src, w, h, cap) {
+    var st = document.getElementById("viewer-stage");
+    st.style.backgroundImage = "url('" + src + "')";
+    st.style.aspectRatio = w + "/" + h;
+    document.getElementById("viewer-cap").textContent = cap || "";
+    document.getElementById("viewer").classList.add("on");
+    document.getElementById("viewer").scrollTop = 0;
+    document.body.style.overflow = "hidden";
+  };
+  window.closeViewer = function () {
+    document.getElementById("viewer").classList.remove("on");
+    document.getElementById("viewer-stage").style.backgroundImage = "";
+    document.body.style.overflow = "";
+  };
+  document.querySelectorAll(".shot").forEach(function (el) {
+    el.addEventListener("click", function () {
+      var cap = el.nextElementSibling ? el.nextElementSibling.textContent : "";
+      openViewer(el.dataset.img, el.dataset.w, el.dataset.h, cap);
+    });
+  });
+
+  // ---------- 好评 ----------
+  async function loadRating() {
+    var box = document.getElementById("rate-summary");
+    if (!CLOUD) { box.textContent = "云端未配置，好评功能暂不可用"; return; }
+    try {
+      var r = await fetch(CFG.SUPABASE_URL + "/rest/v1/rating_summary?select=*", { headers: H });
+      var d = await r.json();
+      var row = Array.isArray(d) ? d[0] : d;
+      if (!row || !row.total) { box.textContent = "还没有人打分，来当第一个"; return; }
+      box.innerHTML = "<b style='color:#fbbf24;font-size:20px'>" + row.avg_stars + "</b> 分 · "
+        + row.total + " 人评分";
+    } catch (e) { box.textContent = "评分加载失败"; }
+  }
+  document.querySelectorAll("#stars span").forEach(function (s) {
+    s.addEventListener("click", async function () {
+      var v = parseInt(s.dataset.v, 10);
+      document.querySelectorAll("#stars span").forEach(function (x) {
+        x.classList.toggle("on", parseInt(x.dataset.v, 10) <= v);
+      });
+      var tip = document.getElementById("rate-tip");
+      if (!CLOUD) { tip.textContent = "云端未配置，打分不会保存"; return; }
+      try {
+        var r = await fetch(CFG.SUPABASE_URL + "/rest/v1/ratings", {
+          method: "POST", headers: H, body: JSON.stringify({ stars: v })
+        });
+        if (!r.ok) throw new Error(r.status);
+        tip.textContent = "已记录，谢谢";
+        loadRating();
+      } catch (e) { tip.textContent = "打分失败：" + e.message; }
+    });
+  });
+
+  // ---------- 评论 ----------
+  function esc(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c];
+    });
+  }
+
+  async function loadComments() {
+    var list = document.getElementById("c-list");
+    if (!CLOUD) { list.innerHTML = '<div class="muted">云端未配置，评论区暂不可用</div>'; return; }
+    list.innerHTML = '<div class="muted">加载中…</div>';
+    try {
+      var r = await fetch(CFG.SUPABASE_URL + "/rest/v1/comments?select=name,body,created_at&order=created_at.desc&limit=50", { headers: H });
+      var arr = await r.json();
+      if (!Array.isArray(arr) || !arr.length) { list.innerHTML = '<div class="muted">还没有评论，来说第一句</div>'; return; }
+      list.innerHTML = arr.map(function (c) {
+        var t = (c.created_at || "").replace("T", " ").slice(0, 16);
+        return '<div class="cmt"><div class="cmt-top"><b>' + esc(c.name) + '</b><span>' + t + '</span></div>'
+          + '<div class="cmt-body">' + esc(c.body) + '</div></div>';
+      }).join("");
+    } catch (e) { list.innerHTML = '<div class="muted">评论加载失败</div>'; }
+  }
+
+  document.getElementById("c-send").onclick = async function () {
+    var err = document.getElementById("c-err");
+    var name = document.getElementById("c-name").value.trim();
+    var body = document.getElementById("c-body").value.trim();
+    err.textContent = "";
+    if (!name || !body) { err.textContent = "昵称和内容都要填"; return; }
+    if (!CLOUD) { err.textContent = "云端未配置，评论发不出去"; return; }
+    try {
+      var r = await fetch(CFG.SUPABASE_URL + "/rest/v1/comments", {
+        method: "POST", headers: H, body: JSON.stringify({ name: name, body: body })
+      });
+      if (!r.ok) throw new Error(r.status);
+      document.getElementById("c-body").value = "";
+      loadComments();
+    } catch (e) { err.textContent = "发送失败：" + e.message; }
+  };
+
+  // ---------- 防存图 ----------
+  ["contextmenu", "dragstart", "selectstart"].forEach(function (ev) {
+    document.addEventListener(ev, function (e) {
+      if (e.target.closest && e.target.closest("input,textarea")) return;
+      e.preventDefault();
+    });
+  });
+
+  // ---------- 记住本次会话 ----------
+  if (sessionStorage.getItem("ps5-ok") === "1") {
+    document.getElementById("gate").style.display = "none";
+    document.getElementById("app").classList.remove("hidden");
+    banner(); loadRating(); loadComments();
+  }
+})();
 </script>
 </body>
 </html>
