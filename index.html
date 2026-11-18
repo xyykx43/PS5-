@@ -3,13 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#0a0c10">
+<meta name="theme-color" content="#0b0b0d">
 <title>PS5 远程串流 · 资源下载中心</title>
 <style>
   :root{
-    --bg:#0a0c10; --surface:rgba(255,255,255,.035); --line:rgba(255,255,255,.09);
-    --text:#e6edf3; --dim:#8b98a8; --accent:#22d3ee; --accent2:#a78bfa;
-    --ok:#34d399; --warn:#fbbf24; --bad:#f87171; --btn:#0ea5b7;
+    --bg:#0b0b0d; --surface:#141416; --surface2:#191a1d; --line:rgba(255,255,255,.10);
+    --text:#eceef1; --dim:#8f9298; --accent:#f4f4f6; --ink:#08090b;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
   html,body{margin:0;padding:0}
@@ -17,116 +16,118 @@
     background:var(--bg); color:var(--text); padding-bottom:56px;
     font:16px/1.68 -apple-system,BlinkMacSystemFont,"PingFang SC","Noto Sans SC",sans-serif;
     -webkit-user-select:none; user-select:none; overflow-x:hidden;
+    -webkit-font-smoothing:antialiased;
   }
   body::before{
     content:""; position:fixed; inset:0; pointer-events:none; z-index:0;
     background:
-      radial-gradient(900px 500px at 80% -10%, rgba(34,211,238,.10), transparent 60%),
-      radial-gradient(700px 400px at 0% 10%, rgba(167,139,250,.08), transparent 60%),
-      repeating-linear-gradient(0deg, rgba(255,255,255,.022) 0 1px, transparent 1px 44px),
-      repeating-linear-gradient(90deg, rgba(255,255,255,.022) 0 1px, transparent 1px 44px);
+      radial-gradient(760px 420px at 78% -12%, rgba(255,255,255,.055), transparent 62%),
+      radial-gradient(620px 380px at -8% 6%, rgba(255,255,255,.035), transparent 60%);
   }
   .wrap{position:relative; z-index:1; max-width:760px; margin:0 auto; padding:0 16px}
 
-  .hero{padding:34px 0 8px}
-  .eyebrow{font:600 11px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.22em; color:var(--accent); text-transform:uppercase; opacity:.9}
-  h1{font-size:25px; line-height:1.3; margin:10px 0 8px; letter-spacing:-.01em}
-  h1 .hl{background:linear-gradient(92deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero{padding:38px 0 6px}
+  .eyebrow{font:600 10.5px/1 ui-monospace,SFMono-Regular,Menlo,monospace; letter-spacing:.26em; color:var(--dim); text-transform:uppercase}
+  h1{font-size:26px; line-height:1.28; margin:12px 0 10px; letter-spacing:-.02em; font-weight:680}
+  h1 .hl{color:#fff}
   .sub{color:var(--dim); font-size:14.5px; margin:0}
   .chips{display:flex; gap:8px; flex-wrap:wrap; margin-top:16px}
-  .chip{font:500 12px/1 ui-monospace,monospace; color:var(--dim); border:1px solid var(--line); background:var(--surface); padding:7px 11px; border-radius:999px}
-  .chip.ok{color:var(--ok); border-color:rgba(52,211,153,.28)}
-  .hero-rule{height:1px; margin:22px 0 0; background:linear-gradient(90deg,var(--accent),transparent 70%); opacity:.35; position:relative; overflow:hidden}
-  .hero-rule::after{content:""; position:absolute; top:0; left:0; width:40%; height:100%;
-    background:linear-gradient(90deg,transparent,rgba(34,211,238,.9),transparent); animation:sweep 4.5s linear infinite}
+  .chip{font:500 12px/1 ui-monospace,monospace; color:var(--dim); border:1px solid var(--line); background:rgba(255,255,255,.02); padding:7px 11px; border-radius:999px}
+  .chip.w{color:var(--text); border-color:rgba(255,255,255,.22); background:rgba(255,255,255,.06)}
+  .hero-rule{height:1px; margin:24px 0 0; background:linear-gradient(90deg,rgba(255,255,255,.35),transparent 72%)}
 
-  .sec{margin:34px 0 12px; display:flex; align-items:center; gap:10px}
-  .sec .mark{font:700 13px/1 ui-monospace,monospace; color:var(--accent)}
-  .sec h2{font-size:16px; margin:0; letter-spacing:.02em; font-weight:650}
+  .sec{margin:36px 0 12px; display:flex; align-items:center; gap:10px}
+  .sec .mark{font:600 12px/1 ui-monospace,monospace; color:#6f7378}
+  .sec h2{font-size:15.5px; margin:0; letter-spacing:.04em; font-weight:640}
   .sec .line{flex:1; height:1px; background:linear-gradient(90deg,var(--line),transparent)}
 
   .card{background:var(--surface); border:1px solid var(--line); border-radius:16px; padding:16px; margin:12px 0}
   .muted{color:var(--dim); font-size:14px}
-  b,strong{color:#fff; font-weight:650}
+  b,strong{color:#fff; font-weight:620}
+
+  /* 准备清单 */
+  .prep{list-style:none; margin:2px 0 0; padding:0}
+  .prep li{display:flex; gap:12px; padding:11px 0; border-bottom:1px solid rgba(255,255,255,.06); font-size:14.5px; line-height:1.6}
+  .prep li:last-child{border-bottom:0; padding-bottom:2px}
+  .prep .n{flex:none; width:22px; height:22px; border-radius:50%; border:1px solid rgba(255,255,255,.28);
+           font:600 11px/21px ui-monospace,monospace; text-align:center; color:#cfd2d7; margin-top:2px}
+  .prep .req{color:#fff}
 
   .btn{display:block; width:100%; text-align:center; padding:13px; border:0; border-radius:12px;
-       background:var(--btn); color:#04191d; font-weight:700; font-size:15.5px; cursor:pointer;
+       background:var(--accent); color:var(--ink); font-weight:680; font-size:15.5px; cursor:pointer;
        transition:transform .18s cubic-bezier(.2,.8,.2,1), box-shadow .25s, filter .2s}
-  .btn:hover{filter:brightness(1.08); box-shadow:0 8px 26px rgba(34,211,238,.22)}
+  .btn:hover{filter:brightness(.94)}
   .btn:active{transform:scale(.975)}
-  .btn.ghost{background:transparent; color:var(--text); border:1px solid var(--line)}
-  .btn.ghost:hover{border-color:rgba(34,211,238,.45); box-shadow:none}
+  .btn.ghost{background:transparent; color:var(--text); border:1px solid rgba(255,255,255,.22)}
+  .btn.ghost:hover{background:rgba(255,255,255,.05)}
 
   .dl-row{display:flex; align-items:center; justify-content:space-between; gap:12px}
-  .dl-name{font-weight:650; font-size:15.5px}
-  .tag{font:600 11px/1 ui-monospace,monospace; padding:4px 8px; border-radius:6px; background:rgba(255,255,255,.06); color:var(--dim); white-space:nowrap}
-  .tag.ok{background:rgba(52,211,153,.14); color:#6ee7b7}
-  .tag.warn{background:rgba(251,191,36,.14); color:#fcd34d}
+  .dl-name{font-weight:640; font-size:15.5px}
+  .tag{font:600 11px/1 ui-monospace,monospace; padding:4px 8px; border-radius:6px; background:rgba(255,255,255,.07); color:#b9bcc2; white-space:nowrap}
+  .tag.w{background:#eceef1; color:#0b0b0d}
   .link-row{display:flex; flex-direction:column; gap:9px; margin-top:12px}
   a.go,button.go{display:block; width:100%; text-align:center; padding:12px; border-radius:12px; border:0;
-    background:var(--btn); color:#04191d; font-weight:700; font-size:15px; text-decoration:none; cursor:pointer;
-    transition:transform .18s, box-shadow .25s, filter .2s}
-  a.go:hover,button.go:hover{filter:brightness(1.08); box-shadow:0 8px 24px rgba(34,211,238,.2)}
+    background:var(--accent); color:var(--ink); font-weight:680; font-size:15px; text-decoration:none; cursor:pointer;
+    transition:transform .18s, filter .2s}
+  a.go:hover,button.go:hover{filter:brightness(.94)}
   a.go:active,button.go:active{transform:scale(.975)}
   a.alt{display:block; text-align:center; padding:11px; border-radius:12px; border:1px solid var(--line);
-    color:var(--dim); font-size:14px; text-decoration:none; transition:border-color .2s,color .2s}
-  a.alt:hover{border-color:rgba(34,211,238,.4); color:var(--text)}
+    color:var(--dim); font-size:14px; text-decoration:none; transition:border-color .2s,color .2s,background .2s}
+  a.alt:hover{border-color:rgba(255,255,255,.28); color:var(--text); background:rgba(255,255,255,.03)}
   .hidden{display:none}
 
-  .tabs{position:sticky; top:0; z-index:20; display:flex; gap:6px; padding:10px 0; margin-top:6px;
-        background:linear-gradient(180deg,var(--bg) 65%,transparent); backdrop-filter:blur(6px)}
+  .tabs{position:sticky; top:0; z-index:20; display:flex; gap:6px; padding:10px 0;
+        background:linear-gradient(180deg,var(--bg) 68%,transparent); backdrop-filter:blur(8px)}
   .tab{flex:1; text-align:center; padding:10px 6px; border-radius:10px; border:1px solid var(--line);
-       background:rgba(255,255,255,.02); color:var(--dim); font-size:13.5px; font-weight:600; cursor:pointer;
+       background:rgba(255,255,255,.02); color:var(--dim); font-size:13.5px; font-weight:620; cursor:pointer;
        transition:all .22s cubic-bezier(.2,.8,.2,1)}
-  .tab.on{color:#03181c; background:linear-gradient(135deg,var(--accent),#67e8f9); border-color:transparent;
-          box-shadow:0 6px 20px rgba(34,211,238,.25)}
+  .tab.on{color:var(--ink); background:var(--accent); border-color:transparent; box-shadow:0 6px 22px rgba(0,0,0,.5)}
   .panel{display:none}
   .panel.on{display:block; animation:fadeUp .35s ease both}
 
-  .step{padding:16px 0; border-bottom:1px dashed rgba(255,255,255,.07)}
+  .step{padding:16px 0; border-bottom:1px solid rgba(255,255,255,.055)}
   .step:last-child{border-bottom:0; padding-bottom:4px}
   .st{display:flex; gap:10px; align-items:baseline; font-size:15px; margin-bottom:11px}
-  .sn{font:700 12px/1 ui-monospace,monospace; color:var(--accent); border:1px solid rgba(34,211,238,.35);
-      border-radius:6px; padding:4px 7px; flex:none; background:rgba(34,211,238,.07)}
-  .shotimg{width:100%; border-radius:12px; display:block; border:1px solid var(--line);
+  .sn{font:600 11.5px/1 ui-monospace,monospace; color:#cfd2d7; border:1px solid rgba(255,255,255,.18);
+      border-radius:6px; padding:4px 7px; flex:none; background:rgba(255,255,255,.04)}
+  .shotimg{width:100%; border-radius:12px; display:block; border:1px solid rgba(255,255,255,.12);
            -webkit-touch-callout:none; -webkit-user-drag:none; user-select:none;
            transition:transform .3s cubic-bezier(.2,.8,.2,1), box-shadow .3s}
-  .shotimg:hover{transform:translateY(-2px); box-shadow:0 12px 30px rgba(0,0,0,.45)}
+  .shotimg:hover{transform:translateY(-2px); box-shadow:0 14px 34px rgba(0,0,0,.55)}
 
   .tut{display:flex; justify-content:space-between; align-items:center; padding:14px 2px; cursor:pointer;
-       border-bottom:1px solid var(--line); transition:color .2s}
+       border-bottom:1px solid rgba(255,255,255,.07); transition:color .2s}
   .tut:last-of-type{border-bottom:0}
-  .tut:hover{color:var(--accent)}
+  .tut:hover{color:#fff}
   .tut .chev{color:var(--dim); font:400 18px/1 ui-monospace,monospace}
 
-  details{border-bottom:1px solid var(--line); padding:12px 0}
+  details{border-bottom:1px solid rgba(255,255,255,.07); padding:13px 0}
   details:last-child{border-bottom:0}
-  summary{cursor:pointer; font-weight:600; list-style:none; display:flex; justify-content:space-between; gap:10px}
+  summary{cursor:pointer; font-weight:620; font-size:15px; list-style:none; display:flex; justify-content:space-between; gap:10px}
   summary::-webkit-details-marker{display:none}
-  summary::after{content:"+"; color:var(--accent); font-weight:700}
+  summary::after{content:"+"; color:#9a9ea4; font-weight:600}
   details[open] summary::after{content:"−"}
-  details p{margin:10px 0 0; color:var(--dim); font-size:14px}
+  details p{margin:10px 0 0; color:var(--dim); font-size:14px; line-height:1.7}
 
   #gate{position:fixed; inset:0; z-index:100; display:flex; align-items:center; justify-content:center; padding:24px;
-        background:radial-gradient(700px 420px at 50% 0%, rgba(34,211,238,.10), transparent 65%), var(--bg)}
+        background:radial-gradient(680px 400px at 50% -8%, rgba(255,255,255,.07), transparent 66%), var(--bg)}
   .gate-box{width:100%; max-width:340px; text-align:center}
-  .gate-box h1{font-size:22px; margin:14px 0 6px}
-  input[type=password],input[type=text],textarea{
+  .gate-box h1{font-size:21px; margin:14px 0 6px; font-weight:640}
+  input[type=password],input[type=text]{
     width:100%; padding:13px 14px; border-radius:12px; border:1px solid var(--line);
-    background:rgba(255,255,255,.03); color:var(--text); font-size:16px; outline:none; font-family:inherit;
+    background:rgba(255,255,255,.035); color:var(--text); font-size:16px; outline:none; font-family:inherit;
     transition:border-color .2s, box-shadow .2s; -webkit-user-select:text; user-select:text}
-  input:focus,textarea:focus{border-color:rgba(34,211,238,.55); box-shadow:0 0 0 3px rgba(34,211,238,.10)}
-  .err{color:var(--bad); font-size:13.5px; min-height:20px; margin-top:8px}
+  input:focus{border-color:rgba(255,255,255,.35); box-shadow:0 0 0 3px rgba(255,255,255,.05)}
+  .err{color:#f0918c; font-size:13.5px; min-height:20px; margin-top:8px}
 
-  #viewer{position:fixed; inset:0; background:#05070a; z-index:200; overflow:auto; display:none}
+  #viewer{position:fixed; inset:0; background:#050506; z-index:200; overflow:auto; display:none}
   #viewer.on{display:block}
   #viewer .bar{position:sticky; top:0; display:flex; justify-content:space-between; align-items:center;
-    padding:10px 14px; background:rgba(0,0,0,.85); color:#cfd8e3; font-size:13px; z-index:2; backdrop-filter:blur(8px)}
-  #viewer .bar button{background:rgba(255,255,255,.08); border:0; color:#fff; padding:8px 14px; border-radius:10px; font-size:13px}
+    padding:10px 14px; background:rgba(0,0,0,.85); color:#cfd2d7; font-size:13px; z-index:2; backdrop-filter:blur(8px)}
+  #viewer .bar button{background:rgba(255,255,255,.1); border:0; color:#fff; padding:8px 14px; border-radius:10px; font-size:13px}
   #viewer .stage{position:relative; width:100%; background-repeat:no-repeat; background-size:100% 100%}
 
   @keyframes fadeUp{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
-  @keyframes sweep{0%{transform:translateX(-100%)} 100%{transform:translateX(100%)}}
   .reveal{opacity:0; transform:translateY(14px); transition:opacity .55s ease, transform .55s cubic-bezier(.2,.8,.2,1)}
   .reveal.in{opacity:1; transform:none}
   .hero h1{animation:fadeUp .5s ease both}
@@ -153,22 +154,41 @@
   <header class="hero">
     <div class="eyebrow">ps5 · remote play</div>
     <h1>让 PS5 在<span class="hl">任何地方</span>都能玩</h1>
-    <p class="sub">Tailscale 组网 + PSPlay 串流，跟着点 12 步搞定。</p>
+    <p class="sub">Tailscale 组网 + PSPlay 串流。先把东西准备好，再跟着点 13 步。</p>
     <div class="chips">
-      <span class="chip ok">NAT 1/2 可连</span>
+      <span class="chip w">NAT 1/2 可连</span>
       <span class="chip">约 20 分钟</span>
       <span class="chip">全免费方案</span>
     </div>
     <div class="hero-rule"></div>
   </header>
 
+  <!-- 准备工作 -->
+  <section class="reveal">
+    <div class="sec"><span class="mark">//</span><h2>开始前先备好</h2><span class="line"></span></div>
+    <div class="card">
+      <ul class="prep">
+        <li><span class="n">1</span><span>一台能装 App 的手机或平板（安卓 / iOS 都行）</span></li>
+        <li><span class="n">2</span><span>一个 <span class="req">Tailscale 账号</span>：用 GitHub、Google、微软或苹果账号登录，注册 1 分钟</span></li>
+        <li><span class="n">3</span><span>装好 <span class="req">PSPlay</span>（安卓约 38 元购买；iOS 用外区账号买）</span></li>
+        <li><span class="n">4</span><span>PS5 已开机，并在 设置 → 系统 → 远程游玩 里<span class="req">启用远程游玩</span></span></li>
+        <li><span class="n">5</span><span>家里网络是 <span class="req">NAT 1 或 NAT 2</span>（PS5 → 设置 → 网络 → 查看连接状态）</span></li>
+        <li><span class="n">6</span><span>一台常开的「基站」：旧手机或电脑，插电不关机</span></li>
+      </ul>
+    </div>
+    <div class="card">
+      <p class="muted" style="margin:0">NAT 1 是开放型，NAT 2 是家庭宽带最常见的类型，这两种都能连。NAT 3 会卡，<b>NAT 4（对称型）基本连不上</b>，先查这个再买软件，省得白花钱。</p>
+    </div>
+  </section>
+
+  <!-- 工具 -->
   <section class="reveal">
     <div class="sec"><span class="mark">//</span><h2>工具下载</h2><span class="line"></span></div>
 
     <div class="card">
       <div class="dl-row">
         <div class="dl-name">Tailscale</div>
-        <span class="tag ok">官方 · 免费</span>
+        <span class="tag w">官方 · 免费</span>
       </div>
       <div class="muted" style="margin-top:6px">安卓装 APK（约 101MB）；iOS 需外区 App Store。</div>
       <div class="link-row">
@@ -180,7 +200,7 @@
     <div class="card">
       <div class="dl-row">
         <div class="dl-name">PSPlay</div>
-        <span class="tag warn">付费约 38 元</span>
+        <span class="tag">付费约 38 元</span>
       </div>
       <div class="muted" style="margin-top:6px">国内打不开 Play 商店，可用 APKPure 下官方原版（未破解，需应用内购买授权）。</div>
       <div class="link-row">
@@ -192,7 +212,7 @@
     <div class="card">
       <div class="dl-row">
         <div class="dl-name">iOS 港服账号</div>
-        <span class="tag warn">请勿外传</span>
+        <span class="tag">请勿外传</span>
       </div>
       <div class="muted" style="margin-top:6px">只在 App Store 登录，<b>严禁</b>在「设置 → iCloud」登录，否则会锁机。</div>
       <div class="link-row">
@@ -200,11 +220,12 @@
       </div>
       <div id="sub-ios" class="hidden">
         <p style="margin:12px 0 0">账号与密码请联系客服索取，不要在群里转发。</p>
-        <p class="muted" style="color:var(--bad)">VX ea7-4398 / QQ 2143742498</p>
+        <p class="muted" style="color:#f0918c">VX ea7-4398 / QQ 2143742498</p>
       </div>
     </div>
   </section>
 
+  <!-- 教程 -->
   <section>
     <div class="sec"><span class="mark">//</span><h2>教程</h2><span class="line"></span></div>
 
@@ -241,20 +262,32 @@
           <img class="shotimg" src="tutor/11.jpg" alt="第11步" loading="lazy" draggable="false"></div>
         <div class="step"><div class="st"><span class="sn">12</span><span>配对成功（提示 not found 就点 YES 手填 IP）</span></div>
           <img class="shotimg" src="tutor/12.jpg" alt="第12步" loading="lazy" draggable="false"></div>
+        <div class="step"><div class="st"><span class="sn">13</span><span>回到主界面，点第二个 <b>REMOTE CONNECT</b>，填 PS5 的 IP</span></div>
+          <img class="shotimg" src="tutor/13.jpg" alt="第13步" loading="lazy" draggable="false"></div>
       </div>
 
       <div class="card">
         <p style="margin:0"><b>怎么查自家网段</b></p>
         <p class="muted">PS5 → 设置 → 网络 → 查看连接状态，记下 IPv4。前三段就是网段：<b>192.168.1.224</b> → <b>192.168.1.0/24</b>。</p>
-        <p class="muted">另外打开：设置 → 系统 → 远程游玩 → 启用远程游玩。</p>
       </div>
     </div>
 
     <div class="panel" id="p-local">
       <div class="card">
-        <p class="muted" style="margin-top:0">同一个 WiFi 下用 PSPlay 直连，不用 Tailscale；想在外网玩，用上面的远程流程。</p>
-        <div class="step"><div class="st"><span class="sn">01</span><span>主界面两个选项：第一个本地，第二个 <b>REMOTE CONNECT</b> 远程</span></div>
-          <img class="shotimg" src="tutor/13.jpg" alt="连接方式" loading="lazy" draggable="false"></div>
+        <p class="muted" style="margin-top:0">同一 WiFi 下用 PSPlay 直连，不用 Tailscale。这段是前面的准备知识和本地注册流程。</p>
+        <div class="tut" onclick="openViewer('local/01.jpg',1280,9680,'前言 · 工具与 NAT 类型')">
+          <span>前言：要用的两个工具、NAT 类型怎么查（点开看）</span><span class="chev">›</span>
+        </div>
+        <div class="step"><div class="st"><span class="sn">01</span><span>打开 PSPlay，点中间那个选项</span></div>
+          <img class="shotimg" src="local/02.jpg" alt="本地2" loading="lazy" draggable="false"></div>
+        <div class="step"><div class="st"><span class="sn">02</span><span>注册界面选你的主机（PS4 / PS5）</span></div>
+          <img class="shotimg" src="local/03.jpg" alt="本地3" loading="lazy" draggable="false"></div>
+        <div class="step"><div class="st"><span class="sn">03</span><span>去 PS5 取 8 位配对码填进去</span></div>
+          <img class="shotimg" src="local/04.jpg" alt="本地4" loading="lazy" draggable="false"></div>
+        <div class="step"><div class="st"><span class="sn">04</span><span>同一网络下配对成功</span></div>
+          <img class="shotimg" src="local/05.jpg" alt="本地5" loading="lazy" draggable="false"></div>
+        <div class="step"><div class="st"><span class="sn">05</span><span>开始游玩</span></div>
+          <img class="shotimg" src="local/06.jpg" alt="本地6" loading="lazy" draggable="false"></div>
       </div>
     </div>
 
@@ -263,30 +296,36 @@
         <div class="tut" onclick="openViewer('ps3.png',1280,7251,'注意事项与常见报错')">
           <span>完整注意事项长图</span><span class="chev">›</span>
         </div>
-        <div class="tut" onclick="openViewer('ps1.png',1280,22982,'前言与本地注册')">
-          <span>前言与本地注册长图</span><span class="chev">›</span>
-        </div>
       </div>
       <div class="card">
-        <p style="margin:0 0 8px"><b>最容易踩的 5 个坑</b></p>
+        <p style="margin:0 0 8px"><b>最容易踩的 6 个坑</b></p>
         <p class="muted">1. 网段要填自己家的，不是照抄 192.168.1.0/24。</p>
         <p class="muted">2. 后台没批准网段＝没生效，必须 Edit route settings 勾选保存。</p>
         <p class="muted">3. 8 位配对码只有几分钟有效，过期回 PS5 重新点「链接设备」。</p>
         <p class="muted">4. Tailscale 和 UU、迅游等加速器会打架，连不上先全关掉。</p>
-        <p class="muted">5. NAT4（对称型）基本连不上，换网络或用电脑做基站。</p>
+        <p class="muted">5. 接收端别开热点，直接连 WiFi 或流量，套娃网络延迟爆炸。</p>
+        <p class="muted">6. NAT4（对称型）基本连不上，换网络或用电脑做基站。</p>
       </div>
     </div>
   </section>
 
+  <!-- FAQ -->
   <section class="reveal">
     <div class="sec"><span class="mark">//</span><h2>常见问题</h2><span class="line"></span></div>
     <div class="card">
-      <details><summary>一定要买 PSPlay 吗？</summary><p>官方 PS Remote Play 免费，但首次连接强制同一 WiFi；异地用它基本连不上，所以教程用 PSPlay。</p></details>
-      <details><summary>为什么我填完网段没反应？</summary><p>Tailscale 后台还要批准：Machines → 设备右侧三点 → Edit route settings → 勾选网段 → Save。</p></details>
-      <details><summary>会不会有风险？</summary><p>串流只涉及登录自己的账号；共享账号借玩的风险自负。</p></details>
+      <details><summary>一定要买 PSPlay 吗？官方 App 不行？</summary><p>官方 PS Remote Play 免费，但首次连接强制要求两台设备在同一 WiFi 下；人不在家就做不到，所以异地串流基本都用 PSPlay。本地同 WiFi 玩，官方 App 也够用。</p></details>
+      <details><summary>怎么查我的 NAT 类型？</summary><p>PS5 → 设置 → 网络 → 查看连接状态 → NAT 类型。类型 1/2 可以，3 会卡，4 基本连不上。查出来是 4，就别买软件了，先找宽带运营商开公网 IP。</p></details>
+      <details><summary>为什么填完网段没有任何反应？</summary><p>Tailscale 有两步：App 里 Add route 只是「声明」，还必须去后台批准 —— login.tailscale.com/admin/machines → 设备右边三点 → Edit route settings → 勾选网段 → Save。少这一步等于没开。</p></details>
+      <details><summary>基站用什么设备最好？</summary><p>首选家里一直开着的电脑（Win/Mac）。只能用安卓手机的话，必须插着电、屏幕别息屏、关掉电池限制，而且不能带出门。这个设备一断，你在外面就连不上。</p></details>
+      <details><summary>配对码老是报错？</summary><p>PS5 屏幕上那 8 位数有效期只有几分钟，拿到就立刻填进 PSPlay；超时了回 PS5 重新点「链接设备」再拿一次。</p></details>
+      <details><summary>一直卡在「正在连接」？</summary><p>把 PSPlay 彻底「清除数据」（不是只清缓存），回 PS5 重新拿注册码再走一遍。另外确认 Tailscale 和加速器没有同时开着。</p></details>
+      <details><summary>能和朋友一起玩吗？</summary><p>可以。你在家用手柄登主号在电视上玩；朋友串流登副号。前提是你的 PS5 要把主号设为「常用主机」，否则朋友那个号跑不了你买的游戏。</p></details>
+      <details><summary>画质怎么设置最稳？</summary><p>1080p、60 帧、码率手动填 15000–20000，HDR 和超分辨率先关掉。设备烫就加散热壳，过热会掉帧。</p></details>
+      <details><summary>会不会有风险 / 会不会封号？</summary><p>串流只是登录你自己的账号看自己的主机，正常使用不涉及封号。共享账号借玩的风险自负，也违反平台条款，不建议。</p></details>
     </div>
   </section>
 
+  <!-- 评论区 -->
   <section class="reveal">
     <div class="sec"><span class="mark">//</span><h2>评论区</h2><span class="line"></span></div>
     <div class="card">
@@ -295,14 +334,14 @@
     </div>
   </section>
 
-  <footer class="muted" style="margin:28px 0 0; font-size:12.5px; line-height:1.8">
+  <footer class="muted" style="margin:30px 0 0; font-size:12.5px; line-height:1.85">
     本页为个人整理，仅供学习交流，严禁二次售卖或公开传播。<br>
     软件与账号均来自第三方，风险自担。虚拟商品一经发出概不退换。
-    <div style="margin-top:10px; font:600 11px/1 ui-monospace,monospace; color:rgba(255,255,255,.18)">xyykx43 · ps5 remote play</div>
+    <div style="margin-top:12px; font:600 10.5px/1 ui-monospace,monospace; color:rgba(255,255,255,.16); letter-spacing:.2em">XYYKX43 · PS5 REMOTE PLAY</div>
   </footer>
 </div>
 
-<div id="sub-modal" style="display:none;position:fixed;inset:0;background:rgba(3,6,10,.8);backdrop-filter:blur(6px);z-index:150;align-items:center;justify-content:center;padding:24px">
+<div id="sub-modal" style="display:none;position:fixed;inset:0;background:rgba(5,5,7,.82);backdrop-filter:blur(6px);z-index:150;align-items:center;justify-content:center;padding:24px">
   <div class="card" style="width:100%;max-width:340px;margin:0">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
       <b id="sub-title">请输入解锁密码</b>
