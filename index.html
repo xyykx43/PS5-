@@ -73,6 +73,11 @@
     background-image:var(--wm);background-repeat:repeat;opacity:.13;
   }
   .shot-cap{margin-top:6px;font-size:13px;color:var(--dim);text-align:center}
+  .step{position:relative;padding:14px 0 18px;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:0}
+  .step .sn{position:absolute;left:0;top:14px;width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  .step .st{padding-left:38px;font-size:15px;margin-bottom:10px}
+  .shotimg{width:100%;border-radius:10px;display:block;-webkit-touch-callout:none;-webkit-user-drag:none;user-select:none}
   .tut{display:flex;justify-content:space-between;align-items:center;padding:13px 2px;border-bottom:1px solid var(--line);cursor:pointer}
   .tut:last-of-type{border-bottom:0}
   .tut .chev{color:var(--dim);font-size:20px}
@@ -118,7 +123,7 @@
   <!-- 教程 -->
   <h2>一、你需要什么</h2>
   <div class="card">
-    <p><b>PSPlay</b>（或 PXPlay / MirrorPlay）：串流软件，安卓可用破解版，iOS 需自行购买正版。</p>
+    <p><b>PSPlay</b>（或 PXPlay / MirrorPlay）：串流软件，安卓与 iOS 都需购买正版（约 38 元）。</p>
     <p><b>Tailscale</b>：免费组网工具，把你在外面的设备和家里的 PS5 拉进同一个虚拟内网。</p>
     <p><b>一个 Tailscale 账号</b>：用 Google / GitHub / 微软 / 苹果账号都能登录。</p>
     <p class="muted">前提：家里的网络最好是 NAT1 或 NAT2（PS5 设置 → 网络 → 查看连接状态 里能看到）。</p>
@@ -149,23 +154,21 @@
   <div class="card dl">
     <div class="dl-head">
       <div class="dl-name">1. Tailscale</div>
-      <span class="tag ok">免费</span>
+      <span class="tag ok">官方</span>
     </div>
-    <div class="muted">安卓装 APK；iOS 需外区 App Store 账号（或联系我们借号）。</div>
-    <a class="go" href="https://tailscale.com/download" target="_blank" rel="noopener">打开官方下载页</a>
-    <a class="alt" href="https://a2xz.hwxz999.com/app/202509/30/tailscale_262960.apk?tk=eJIoMYIQOEOQNYNIIMOIIAOIMUMwcIMwZIIRaxYFZ8NINAYBIweIOgOMMRy3jxTsnij3T0zzTsmijsnijxT1iiy6Cii6nhWz2sVyj5juXriii6TyT1T9" target="_blank" rel="noopener">安卓 APK 备用下载（第三方源）</a>
+    <div class="muted">安卓直接装 APK（约 101MB）；iOS 需外区 App Store 账号。</div>
+    <a class="go" href="https://tailscale.com/download" target="_blank" rel="noopener">官方下载页（推荐）</a>
+    <a class="alt" href="https://github.com/tailscale/tailscale-android/releases/download/1.104.7-tfb3b9b296-g226f029a3/tailscale-android-universal-1.104.7.apk" target="_blank" rel="noopener">安卓 APK 直链 · GitHub 官方 · 101MB</a>
   </div>
 
   <div class="card dl">
     <div class="dl-head">
-      <div class="dl-name">2. PSPlay（安卓破解版）</div>
-      <span class="tag warn">第三方源</span>
+      <div class="dl-name">2. PSPlay（正版）</div>
+      <span class="tag warn">付费约 38 元</span>
     </div>
-    <div class="muted">装之前手机可能提示风险，属正常。介意的话去 Google Play 买正版。</div>
-    <button class="go" onclick="openSub('psplay')">输入密码获取下载</button>
-    <div id="sub-psplay" class="hidden">
-      <a class="go" style="margin-top:8px" href="https://apid.kxdw.com/adown/142364/?html=2" target="_blank" rel="noopener">点击下载 PSPlay 破解版</a>
-    </div>
+    <div class="muted">国内打不开 Play 商店，可用 APKPure 下官方原版安装包（未破解，需在应用内购买授权）。</div>
+    <a class="go" href="https://apkpure.com/tw/psplay-remote-play/psplay.grill.com" target="_blank" rel="noopener">APKPure 原版安装包</a>
+    <a class="alt" href="https://play.google.com/store/apps/details?id=psplay.grill.com" target="_blank" rel="noopener">Google Play 页面（需外网）</a>
   </div>
 
   <div class="card dl">
@@ -174,11 +177,10 @@
       <span class="tag warn">请勿外传</span>
     </div>
     <div class="muted">只在 App Store 登录，<b>严禁</b>在「设置 → iCloud」登录，否则会锁机。</div>
-    <button class="go" onclick="openSub('ios')">输入密码获取账号</button>
+    <button class="go" onclick="openSub('ios')">输入密码查看获取方式</button>
     <div id="sub-ios" class="hidden">
-      <p style="margin-top:10px">账号：2143742498@qq.com</p>
-      <p>密码：14717515532+Xf</p>
-      <p class="muted" style="color:var(--bad)">如遇账号锁定，联系客服 VX ea7-4398 / QQ 2143742498</p>
+      <p style="margin-top:10px">账号与密码请联系客服索取，不要在群里转发。</p>
+      <p class="muted" style="color:var(--bad)">VX ea7-4398 / QQ 2143742498</p>
     </div>
   </div>
 
@@ -195,6 +197,10 @@
       <span>图 3 · 注意事项与常见报错</span><span class="chev">›</span>
     </div>
     <p class="muted" style="margin-top:10px">图片已禁止长按保存；需要原图请联系客服。</p>
+  </div>
+
+  <div class="card">
+    <p class="muted">新版分段图解整理中，剪好的图发我，我按顺序接进这里。</p>
   </div>
 
   <!-- 评论 -->
@@ -305,7 +311,8 @@
   document.getElementById("pwd").addEventListener("keydown", function (e) { if (e.key === "Enter") unlock(); });
 
   // ---------- 二级密码 ----------
-  var SUBPWD = { psplay: "2006xf", ios: "xf2006" };
+  var SUBPWD = { psplay: "ce258c514b7e8faf514768eda59ea754bbef5ee622d47e6391097be0d4a0e181",
+               ios: "77f2ad5668a81db54c861304272da18100e22393929003cbb81d0b65a08716f6" };
   var subType = "";
   window.openSub = function (t) {
     subType = t;
@@ -315,9 +322,10 @@
     document.getElementById("sub-modal").style.display = "flex";
   };
   window.closeSub = function () { document.getElementById("sub-modal").style.display = "none"; };
-  window.verifySub = function () {
+  window.verifySub = async function () {
     var v = document.getElementById("sub-pwd").value.trim();
-    if (v === SUBPWD[subType]) {
+    var hv = await sha256(v);
+    if (hv === SUBPWD[subType]) {
       document.getElementById("sub-" + subType).classList.remove("hidden");
       closeSub();
     } else {

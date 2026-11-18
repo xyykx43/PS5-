@@ -7,5 +7,5 @@ window.SITE_CONFIG = {
   // 主密码的 SHA-256。改密码：在终端跑
   //   node -e "console.log(require('crypto').createHash('sha256').update('新密码').digest('hex'))"
   // 把输出替换下面这串（默认对应旧密码 520439）
-  LOCAL_PASSWORD_SHA256: "ef7ab714af917b6d8f73541f092b73d9408b31ec388309486a6460a4b71cfc7b"
+  LOCAL_PASSWORD_SHA256: "470081e7b6dfd78c4a1709549561a0f1c0d0f3277770fb25a81edd7cba7ee633"
 };
