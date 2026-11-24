@@ -585,10 +585,10 @@
       <div class="dev-pwd" id="dev-cur">------</div>
       <p class="muted" id="dev-until" style="margin:0 0 12px;font-size:12px"></p>
       <p class="muted" style="margin:0 0 6px">按时长卖的密码（给客户对应时长的即可）</p>
-      <p class="dev-next" id="dev-t60" style="margin:0 0 4px;font-size:15px">1 小时：------</p>
-      <p class="dev-next" id="dev-t120" style="margin:0 0 4px;font-size:15px">2 小时：------</p>
-      <p class="dev-next" id="dev-t480" style="margin:0 0 4px;font-size:15px">8 小时：------</p>
-      <p class="dev-next" id="dev-t1440" style="margin:0 0 12px;font-size:15px">24 小时：------</p>
+      <p class="dev-next" style="margin:0 0 4px;font-size:15px">1 小时：<span id="dev-t60">------</span> <a href="javascript:void(0)" style="font-size:12px;color:var(--dim-2)" onclick="copyPwd('dev-t60')">复制</a></p>
+      <p class="dev-next" style="margin:0 0 4px;font-size:15px">2 小时：<span id="dev-t120">------</span> <a href="javascript:void(0)" style="font-size:12px;color:var(--dim-2)" onclick="copyPwd('dev-t120')">复制</a></p>
+      <p class="dev-next" style="margin:0 0 4px;font-size:15px">8 小时：<span id="dev-t480">------</span> <a href="javascript:void(0)" style="font-size:12px;color:var(--dim-2)" onclick="copyPwd('dev-t480')">复制</a></p>
+      <p class="dev-next" style="margin:0 0 12px;font-size:15px">24 小时：<span id="dev-t1440">------</span> <a href="javascript:void(0)" style="font-size:12px;color:var(--dim-2)" onclick="copyPwd('dev-t1440')">复制</a></p>
       <p class="muted" style="margin:0">客服密码</p>
       <div class="dev-next" id="dev-cs">------</div>
       <p class="muted" style="margin:6px 0 0;font-size:12px">客服密码与主页密码不同，点「专属客服」时输入。</p>
@@ -702,7 +702,7 @@
     document.getElementById("dev-cs").textContent = await hourlyPassword(now, "cs");
     var labels = {60: "1 小时", 120: "2 小时", 480: "8 小时", 1440: "24 小时"};
     for (var k in labels) {
-      document.getElementById("dev-t" + k).textContent = labels[k] + "： " + (await tierPassword(now, undefined, parseInt(k, 10)));
+      document.getElementById("dev-t" + k).textContent = await tierPassword(now, undefined, parseInt(k, 10));
     }
     document.getElementById("dev-next").textContent = await hourlyPassword(new Date(now.getTime() + period));
     var ms = period - (now.getTime() % period);
@@ -717,7 +717,7 @@
     id = id || "dev-cur";
     var p = document.getElementById(id).textContent.trim();
     var btn = window.event && window.event.target;
-    var label = id === "dev-cs" ? "复制客服密码" : "复制主页密码";
+    var label = btn && btn.tagName === "A" ? "复制" : (id === "dev-cs" ? "复制客服密码" : "复制主页密码");
     function done() { if (btn) { btn.textContent = "已复制 ✓"; setTimeout(function () { btn.textContent = label; }, 1600); } }
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(p).then(done, function () {});
   };
