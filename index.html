@@ -580,19 +580,20 @@
       <div class="err" id="dev-err"></div>
     </div>
     <div id="dev-show" class="hidden">
-      <p class="muted" style="margin:0">主页密码（当前小时）</p>
+      <p class="muted" id="dev-period" style="margin:0 0 10px;font-size:12px"></p>
+      <p class="muted" style="margin:0">主页密码</p>
       <div class="dev-pwd" id="dev-cur">------</div>
       <p class="muted" id="dev-until" style="margin:0 0 12px;font-size:12px"></p>
-      <p class="muted" style="margin:0">客服密码（当前小时）</p>
+      <p class="muted" style="margin:0">客服密码</p>
       <div class="dev-next" id="dev-cs">------</div>
       <p class="muted" style="margin:6px 0 0;font-size:12px">客服密码与主页密码不同，点「专属客服」时输入。</p>
-      <p class="muted" style="margin:14px 0 0">下一小时主页密码</p>
+      <p class="muted" style="margin:14px 0 0">下一个周期的主页密码</p>
       <div class="dev-next" id="dev-next">------</div>
       <div style="display:flex;gap:8px;margin-top:14px">
         <button class="btn" onclick="copyPwd('dev-cur')">复制主页密码</button>
         <button class="btn ghost" onclick="copyPwd('dev-cs')">复制客服密码</button>
       </div>
-      <p class="muted" style="font-size:12px;margin:10px 0 0">密码每小时整点自动更换。</p>
+      <p class="muted" style="font-size:12px;margin:10px 0 0">密码按设定周期自动更换，周期在全站统一的 config.js 里设置，改完推送生效。</p>
     </div>
   </div>
 </div>
@@ -611,9 +612,14 @@
   var DEV_PASSWORD = "14717515532";
   function pad2(n) { return n < 10 ? "0" + n : "" + n; }
 
+  function periodMinutes() {
+    var m = parseInt(CFG.PASSWORD_PERIOD_MINUTES, 10);
+    return (m && m >= 5) ? m : 60;
+  }
   async function hourlyPassword(d, kind) {
     d = d || new Date();
-    var key = PAGE_SALT + (kind === "cs" ? "|cs" : "") + "|" + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + "|" + pad2(d.getHours());
+    var bucket = Math.floor(d.getTime() / (periodMinutes() * 60000));
+    var key = PAGE_SALT + (kind === "cs" ? "|cs" : "") + "|" + bucket;
     var h = await sha256(key);
     return String(parseInt(h.slice(0, 8), 16) % 900000 + 100000);
   }
@@ -626,9 +632,10 @@
     btn.disabled = true; err.textContent = "验证中…";
     try {
       var now = new Date();
+      var step = periodMinutes() * 60000;
       var ok = false;
       for (var i = -1; i <= 1 && !ok; i++) {
-        if ((await hourlyPassword(new Date(now.getTime() + i * 3600000))) === pwd) ok = true;
+        if ((await hourlyPassword(new Date(now.getTime() + i * step))) === pwd) ok = true;
       }
       if (ok) {
         sessionStorage.setItem("ps5-ok", "1");
@@ -675,10 +682,12 @@
   };
   async function refreshDev() {
     var now = new Date();
+    var period = periodMinutes() * 60000;
+    document.getElementById("dev-period").textContent = "密码周期：" + periodMinutes() + " 分钟（改 config.js 的 PASSWORD_PERIOD_MINUTES）";
     document.getElementById("dev-cur").textContent = await hourlyPassword(now);
     document.getElementById("dev-cs").textContent = await hourlyPassword(now, "cs");
-    document.getElementById("dev-next").textContent = await hourlyPassword(new Date(now.getTime() + 3600000));
-    var ms = (60 - now.getMinutes()) * 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
+    document.getElementById("dev-next").textContent = await hourlyPassword(new Date(now.getTime() + period));
+    var ms = period - (now.getTime() % period);
     document.getElementById("dev-until").textContent = "距更换还有 " + Math.max(1, Math.ceil(ms / 60000)) + " 分钟";
   }
   setInterval(function () {
@@ -807,9 +816,10 @@
     var err = document.getElementById("cs-lock-err");
     if (!v) { err.textContent = "请输入客服密码"; return; }
     var now = new Date();
+    var step = periodMinutes() * 60000;
     var ok = false;
     for (var i = -1; i <= 1 && !ok; i++) {
-      if ((await hourlyPassword(new Date(now.getTime() + i * 3600000), "cs")) === v) ok = true;
+      if ((await hourlyPassword(new Date(now.getTime() + i * step), "cs")) === v) ok = true;
     }
     if (ok) {
       sessionStorage.setItem("cs-ok", "1");
