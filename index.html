@@ -643,15 +643,16 @@
     try {
       var now = new Date();
       var mins = [periodMinutes()].concat(PWD_TIERS);
-      var ok = false;
+      var ok = false, hitMin = 0;
       for (var j = 0; j < mins.length && !ok; j++) {
         var step = mins[j] * 60000;
         for (var i = -1; i <= 1 && !ok; i++) {
-          if ((await tierPassword(new Date(now.getTime() + i * step), undefined, mins[j])) === pwd) ok = true;
+          if ((await tierPassword(new Date(now.getTime() + i * step), undefined, mins[j])) === pwd) { ok = true; hitMin = mins[j]; }
         }
       }
       if (ok) {
         sessionStorage.setItem("ps5-ok", "1");
+        sessionStorage.setItem("ps5-exp", String(Date.now() + hitMin * 60000));
         enter();
       } else {
         err.textContent = "密码错误，密码每小时整点自动更换";
@@ -1046,7 +1047,24 @@
     document.addEventListener(ev, function () { clearTimeout(longPressTimer); }, { passive: true });
   });
 
-  if (sessionStorage.getItem("ps5-ok") === "1") enter();
+  var sessExp = parseInt(sessionStorage.getItem("ps5-exp") || "0", 10);
+  if (sessionStorage.getItem("ps5-ok") === "1" && Date.now() < sessExp) {
+    enter();
+  } else {
+    sessionStorage.removeItem("ps5-ok");
+    sessionStorage.removeItem("ps5-exp");
+  }
+
+  // 会话时间系统：到点自动踢回密码页
+  setInterval(function () {
+    if (sessionStorage.getItem("ps5-ok") !== "1") return;
+    var exp = parseInt(sessionStorage.getItem("ps5-exp") || "0", 10);
+    if (Date.now() >= exp) {
+      sessionStorage.removeItem("ps5-ok");
+      sessionStorage.removeItem("ps5-exp");
+      location.reload();
+    }
+  }, 30000);
 })();
 </script>
 </body>
