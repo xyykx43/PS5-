@@ -666,15 +666,16 @@
 
   /* ---------- 专属客服 ---------- */
   var CS_SYSTEM = [
-    "你是 PS5 远程串流教程站的专属客服，只回答 Tailscale + PSPlay 串流 PS5 教程内的问题。",
+    "你是 PS5 远程串流教程站的专属客服，只处理 Tailscale + PSPlay 串流 PS5 教程内的问题。",
     "规则：",
-    "1. 回答极短，一句话，直接告诉对方点哪里，不解释原因，不客套、不废话。",
-    "2. 对方发截图时先看图判断卡在哪一步，再直接给下一步操作。",
-    "3. 提取密码 / 资源密码一律不给，让对方加 QQ 2143742498 找站长，价格找站长谈。",
-    "4. 退款、海外、Portal 掌机、iOS 当基站这类问题照注意事项回答：Portal 帮不了；海外不接；iOS 只能做接收端；退款只限设备不允许或没看注意事项。",
-    "5. 教程外的话题（其他软件、其他游戏、破解）只回：只接教程内问题。",
-    "6. 看不到图就让对方重发一张，不要编造截图内容。",
-    "教程主线：Tailscale 登录授权 → 左上角开 VPN → 右上角设置 → Subnet routing 开开关 → 基站 Add route 填 192.168.x.0/24 → 后台 Edit route settings 勾选保存 → 电池设无限制 → 第二台登录同账号 → Subnet 开 Use 不点 Add route → PSPlay 选 REMOTE CONNECT 手动填 PS5 的 IPv4 → OK。"
+    "1. 只接教程内问题。教程外的话题（别的软件、别的游戏、破解、闲聊、夸奖）一律只回：只接教程内的问题。",
+    "2. 默认极简：一句话，直接说他现在该点哪里、下一步做什么，不解释、不客套、不重复他的问题。",
+    "3. 只有他明确问「为什么 / 原理 / 什么意思」时，才用两三句讲原理，讲完就停。",
+    "4. 他发图时，看截图判断卡在哪一步，直接说下一步点哪个，不描述图片。",
+    "5. 提取密码 / 资源密码不给：让他加 QQ 2143742498 找站长，价格找站长谈。",
+    "6. 退款、海外、Portal 掌机、iOS 当基站：按注意事项一句话回复（Portal 帮不了；海外不接；iOS 只能接收端；退款只限设备不允许或没看注意事项）。",
+    "7. 图看不清就让他重发一张，不编内容。",
+    "教程主线：Tailscale 登录授权 → 左上角开 VPN → 右上角设置 → Subnet routing 开开关 → 基站 Add route 填 192.168.x.0/24 → 后台 Edit route settings 勾选保存 → 电池无限制 → 第二台登录同账号 → Subnet 开 Use 不点 Add route → PSPlay 选 REMOTE CONNECT 手动填 PS5 的 IPv4 → OK。"
   ].join("\n");
 
   var CS_HISTORY = [];
@@ -736,13 +737,23 @@
   document.getElementById("cs-file").addEventListener("change", function () {
     var f = this.files && this.files[0];
     if (!f) return;
+    this.value = "";
     var fr = new FileReader();
     fr.onload = function () {
-      CS_IMG = fr.result;
-      document.getElementById("cs-input").placeholder = "图片已选，点发送";
+      var img = new Image();
+      img.onload = function () {
+        var max = 1000;
+        var w = img.width, h = img.height;
+        if (w > max || h > max) { var s = Math.min(max / w, max / h); w = Math.round(w * s); h = Math.round(h * s); }
+        var c = document.createElement("canvas");
+        c.width = w; c.height = h;
+        c.getContext("2d").drawImage(img, 0, 0, w, h);
+        CS_IMG = c.toDataURL("image/jpeg", 0.72);
+        document.getElementById("cs-input").placeholder = "图片已选，点发送";
+      };
+      img.src = fr.result;
     };
     fr.readAsDataURL(f);
-    this.value = "";
   });
 
   window.sendCS = async function () {
@@ -755,20 +766,31 @@
     if (text) content.push({ type: "text", text: text });
     if (img) content.push({ type: "image_url", image_url: { url: img } });
     CS_HISTORY.push({ role: "user", content: content.length === 1 && content[0].type === "text" ? text : content });
+    if (CS_HISTORY.length > 7) CS_HISTORY = CS_HISTORY.slice(-7);
     inp.value = ""; CS_IMG = null; inp.placeholder = "卡在哪一步？";
     var tip = csMsg("bot", "…");
-    if (!CFG.CHAT_ENDPOINT) {
-      tip.textContent = "客服接口未配置（config.js 里 CHAT_ENDPOINT 为空）。";
+    if (!CFG.CHAT_ENDPOINT || !(CFG.DEEPSEEK_KEY_B64 || CFG.DEEPSEEK_KEY)) {
+      tip.textContent = "客服未配置（config.js 里 CHAT_ENDPOINT 或 key 为空）。";
       return;
     }
     try {
+      var key = CFG.DEEPSEEK_KEY_B64 ? atob(CFG.DEEPSEEK_KEY_B64) : CFG.DEEPSEEK_KEY;
       var r = await fetch(CFG.CHAT_ENDPOINT, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [{ role: "system", content: CS_SYSTEM }].concat(CS_HISTORY) })
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + key },
+        body: JSON.stringify({
+          model: "deepseek-chat",
+          messages: [{ role: "system", content: CS_SYSTEM }].concat(CS_HISTORY),
+          temperature: 0.2,
+          max_tokens: 300
+        })
       });
+      if (!r.ok) {
+        tip.textContent = "客服出错了（" + r.status + "），稍后再试。";
+        return;
+      }
       var data = await r.json();
-      var out = data.reply || (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "没听懂，发图或者换个说法。";
+      var out = (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || data.reply || "没听懂，发图或者换个说法。";
       tip.textContent = out;
       CS_HISTORY.push({ role: "assistant", content: out });
     } catch (e) {
