@@ -599,6 +599,14 @@
         <button class="btn ghost" onclick="copyPwd('dev-cs')">复制客服密码</button>
       </div>
       <p class="muted" style="font-size:12px;margin:10px 0 0">密码按设定周期自动更换，周期在全站统一的 config.js 里设置，改完推送生效。</p>
+      <div style="margin-top:16px;text-align:center">
+        <img src="assets/site-qr.png" alt="站点二维码" style="width:150px;height:150px;border-radius:12px;background:#fff;padding:6px">
+        <p class="muted" style="font-size:12px;margin:6px 0 0">扫码打开本站</p>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button class="btn ghost" onclick="copySite()">复制站点链接</button>
+        <button class="btn ghost" onclick="copyAd()">复制宣传文案</button>
+      </div>
     </div>
   </div>
 </div>
@@ -713,6 +721,22 @@
     var s = document.getElementById("dev-show");
     if (m && m.style.display === "flex" && s && !s.classList.contains("hidden")) refreshDev();
   }, 30000);
+  function copyText(t) {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(t);
+    else {
+      var ta = document.createElement("textarea");
+      ta.value = t; ta.style.position = "fixed"; ta.style.opacity = "0";
+      document.body.appendChild(ta); ta.select();
+      try { document.execCommand("copy"); } catch (e) {}
+      document.body.removeChild(ta);
+    }
+  }
+  window.copySite = function () {
+    copyText("https://xyykx43.github.io/PS5-/");
+  };
+  window.copyAd = function () {
+    copyText("PS5 远程串流教程：人在外地也能用手机玩家里的 PS5，18 步图文教程 + AI 客服随叫随到，不用公网 IP、不用加速器。官网 https://xyykx43.github.io/PS5-/");
+  };
   window.copyPwd = function (id) {
     id = id || "dev-cur";
     var p = document.getElementById(id).textContent.trim();
