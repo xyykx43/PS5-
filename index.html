@@ -96,10 +96,43 @@
   a.alt:hover{border-color:#4a4e56; color:#fff; background:rgba(255,255,255,.035)}
   .hidden{display:none}
 
-  .tabs{position:sticky; top:0; z-index:20; display:flex; gap:5px; padding:12px 0;
+  /* 专属客服 */
+  #cs-fab{position:fixed; right:16px; bottom:20px; z-index:90; display:flex; align-items:center; gap:8px;
+    padding:12px 16px; border-radius:999px; border:1px solid var(--face-line); font:inherit;
+    background:linear-gradient(180deg,#3a3f48,#2b3038); color:#e9ecf1; font-weight:640; font-size:14px;
+    box-shadow:0 10px 30px rgba(0,0,0,.5), inset 0 1px 0 rgba(255,255,255,.1); cursor:pointer;
+    transition:transform .2s, filter .25s}
+  #cs-fab:hover{filter:brightness(1.1)}
+  #cs-fab:active{transform:scale(.96)}
+  #cs-panel{position:fixed; inset:0; z-index:160; display:none; background:rgba(0,0,0,.5);
+    backdrop-filter:blur(6px); align-items:flex-end; justify-content:center}
+  #cs-panel.on{display:flex}
+  .cs-box{width:100%; max-width:460px; max-height:78vh; display:flex; flex-direction:column;
+    margin:0 10px 12px; border-radius:20px; overflow:hidden; border:1px solid var(--line-2);
+    background:linear-gradient(180deg,var(--card-hi),var(--card)); box-shadow:var(--shadow-lg)}
+  .cs-head{display:flex; justify-content:space-between; align-items:center; padding:14px 16px;
+    border-bottom:1px solid var(--line); font-size:15px}
+  .cs-head span{color:var(--dim-2); font-size:24px; line-height:1; cursor:pointer}
+  .cs-msgs{flex:1; overflow-y:auto; padding:14px; display:flex; flex-direction:column; gap:10px; min-height:180px}
+  .cs-msg{max-width:86%; padding:10px 13px; border-radius:14px; font-size:13.5px; line-height:1.6; word-break:break-word}
+  .cs-msg.bot{align-self:flex-start; background:#22252a; border:1px solid var(--line); border-bottom-left-radius:5px}
+  .cs-msg.user{align-self:flex-end; background:#343943; border:1px solid var(--face-line); border-bottom-right-radius:5px}
+  .cs-msg img{max-width:100%; border-radius:9px; display:block; margin-bottom:5px; border:1px solid var(--line)}
+  .cs-foot{display:flex; align-items:center; gap:8px; padding:10px 12px; border-top:1px solid var(--line)}
+  .cs-foot .cs-img{flex:none; padding:9px 12px; border-radius:11px; border:1px solid var(--line-2);
+    color:var(--dim); font-size:13px; cursor:pointer}
+  .cs-foot input[type=text]{flex:1; width:auto; min-width:0; padding:10px 12px; border-radius:11px; font-size:14px}
+  .cs-foot .send{flex:none; width:auto; padding:10px 15px; border-radius:11px; font-size:14px; margin:0}
+  .cs-warn{font-size:12px; color:var(--dim-2); padding:0 14px 10px}
+
+  /* 开发者选项 */
+  .dev-pwd{font:700 30px/1.15 ui-monospace,monospace; letter-spacing:.16em; margin:2px 0 4px; color:#fff}
+  .dev-next{font:600 19px/1.2 ui-monospace,monospace; letter-spacing:.12em; margin:2px 0 12px; color:var(--dim)}
+
+  .tabs{position:sticky; top:0; z-index:20; display:flex; flex-wrap:wrap; gap:5px; padding:12px 0;
         background:linear-gradient(180deg,var(--bg) 74%,rgba(18,19,22,.86)); backdrop-filter:blur(10px)}
-  .tab{flex:1; text-align:center; padding:10px 4px; border-radius:11px; border:1px solid var(--line);
-       background:linear-gradient(180deg,#1e2126,#181a1e); color:var(--dim); font-size:12.5px; font-weight:600;
+  .tab{flex:1 1 30%; min-width:0; text-align:center; padding:9px 2px; border-radius:11px; border:1px solid var(--line);
+       background:linear-gradient(180deg,#1e2126,#181a1e); color:var(--dim); font-size:12px; font-weight:600;
        cursor:pointer; white-space:nowrap; letter-spacing:.01em;
        transition:all .28s cubic-bezier(.2,.8,.2,1); box-shadow:inset 0 1px 0 rgba(255,255,255,.035)}
   .tab.on{color:#fff; border-color:var(--face-line);
@@ -178,6 +211,7 @@
     <button class="btn" id="gate-btn" style="margin-top:12px">进入</button>
     <div class="err" id="gate-err"></div>
     <p class="muted" style="font-size:12px;margin-top:14px">忘记密码 · QQ 2143742498</p>
+    <p class="muted" style="font-size:12px;margin-top:8px"><a href="javascript:void(0)" id="dev-open" style="color:var(--dim-2);text-decoration:underline;text-underline-offset:3px">开发者选项</a></p>
   </div>
 </div>
 
@@ -264,45 +298,100 @@
     <div class="sec"><span class="mark">//</span><h2>教程</h2><span class="line"></span></div>
 
     <div class="tabs" role="tablist">
-      <button class="tab on" data-tab="remote" role="tab">远程连接</button>
+      <button class="tab on" data-tab="friend" role="tab">朋友远程注册</button>
+      <button class="tab" data-tab="remote2" role="tab">远程连接</button>
       <button class="tab" data-tab="local" role="tab">本地连接</button>
       <button class="tab" data-tab="notes" role="tab">注意事项</button>
       <button class="tab" data-tab="contact" role="tab">联系我</button>
     </div>
 
-    <div class="panel on" id="p-remote">
+    <div class="panel on" id="p-friend">
       <div class="card">
-        <p class="muted" style="margin-top:0">一个段落一张图，红圈是要点的地方。</p>
+        <p style="margin:0 0 6px"><b>朋友远程注册 PS5 教程</b></p>
+        <p class="muted" style="margin-top:0">让朋友连你的 PS5。一个段落一张图，红圈是要点的地方。</p>
         <div class="step"><div class="st"><span class="sn">01</span><span>打开 Tailscale，点蓝色 <b>Connect to VPN</b></span></div>
-          <img class="shotimg" src="tutor/01.jpg" alt="第1步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/01.jpg" alt="第1步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">02</span><span>登录页选 <b>Sign in with GitHub</b>（或 Google / 邮箱）</span></div>
-          <img class="shotimg" src="tutor/02.jpg" alt="第2步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/02.jpg" alt="第2步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">03</span><span>点绿色 <b>Authorize tailscale</b> 授权</span></div>
-          <img class="shotimg" src="tutor/03.jpg" alt="第3步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/03.jpg" alt="第3步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">04</span><span>授权成功，回到 App</span></div>
-          <img class="shotimg" src="tutor/04.jpg" alt="第4步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/04.jpg" alt="第4步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">05</span><span>点左上角开关，连上 VPN</span></div>
-          <img class="shotimg" src="tutor/05.jpg" alt="第5步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/05.jpg" alt="第5步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">06</span><span>右上角齿轮 → <b>Subnet routing</b></span></div>
-          <img class="shotimg" src="tutor/06.jpg" alt="第6步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/06.jpg" alt="第6步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">07</span><span>当基站的设备点 <b>Add route</b></span></div>
-          <img class="shotimg" src="tutor/07.jpg" alt="第7步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/07.jpg" alt="第7步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">08</span><span>填 <b>192.168.1.0/24</b>，点 OK</span></div>
-          <img class="shotimg" src="tutor/08.jpg" alt="第8步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/08.jpg" alt="第8步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">09</span><span>后台批准：<b>Edit route settings</b> → 勾选 → Save</span></div>
-          <img class="shotimg" src="tutor/09.jpg" alt="第9步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/09.jpg" alt="第9步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">10</span><span>为什么这么做（原理，可跳过）</span></div>
-          <img class="shotimg" src="tutor/10.jpg" alt="第10步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/10.jpg" alt="第10步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">11</span><span>打开 PSPlay，点 <b>REGISTER PS</b></span></div>
-          <img class="shotimg" src="tutor/11.jpg" alt="第11步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/11.jpg" alt="第11步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">12</span><span>配对成功（提示 not found 点 YES 手填 IP）</span></div>
-          <img class="shotimg" src="tutor/12.jpg" alt="第12步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/12.jpg" alt="第12步" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">13</span><span>回主界面点第二个 <b>REMOTE CONNECT</b>，填 PS5 的 IP</span></div>
-          <img class="shotimg" src="tutor/13.jpg" alt="第13步" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="tutor/13.jpg" alt="第13步" loading="lazy" draggable="false" decoding="async"></div>
       </div>
       <div class="card">
         <p style="margin:0"><b>怎么查自家网段</b></p>
         <p class="muted">PS5 → 设置 → 网络 → 查看连接状态，记下 IPv4。前三段就是网段：<b>192.168.1.224</b> → <b>192.168.1.0/24</b>。</p>
+      </div>
+    </div>
+
+    <div class="panel" id="p-remote2">
+      <div class="card">
+        <p style="margin:0 0 6px"><b>自己需要远程连接 · 教程前言</b></p>
+        <p class="muted" style="margin:0 0 8px">需要准备的设备与情景环境：</p>
+        <ul class="prep">
+          <li><span class="n">1</span><span>确定自己在 PS5 游戏机旁边，不在游戏机旁边没办法串流，设置需要在 PS5 身边才能完成。</span></li>
+          <li><span class="n">2</span><span>只需多余的<b>一台安卓手机</b>（什么型号都行，能下软件、能开 VPN、能打开浏览器，放在家里）。没有就用电脑；电脑不能长时间开着就不行。绝对不能是 iOS，iOS 只能做接收端，不能做基站。</span></li>
+        </ul>
+        <p class="muted" style="margin:14px 0 8px">注意事项：</p>
+        <p class="muted">1. PlayStation Portal 串流掌机不能串流，掌机不能下软件，用这个的我帮不了你。</p>
+        <p class="muted">2. 海外的不要来找我。要让朋友连游戏机的，走旁边的「朋友远程注册」教程。</p>
+        <p class="muted">3. 只有教程费，全程无额外收费，如果有，那就是盗版或者盗狗。</p>
+        <p class="muted">4. 担心安全：教程是我自己搭建的，全部依靠技术活，官方软件无毒、开源软件，不会泄露密码，所有下载链接皆从官方获取。</p>
+        <p class="muted">5. 只能用 PSPlay 游玩；没有购买的自行去商场或谷歌市场下载正版。iOS 请登录港服 App Store 下载 Tailscale。</p>
+        <p class="muted">6. 串流成功、流量测试也成功，但画面与帧数有问题的不退款——跟组网没关系，跟你的网络或 PSPlay 设置有关。只有设备不允许、下单没看清楚注意事项的特殊情况我才批准。</p>
+        <p class="muted">7. 教程里接入了带识图的智能客服，哪里卡住直接发图片问或打字问，他告诉你点哪里，只答教程内的问题。</p>
+      </div>
+
+      <div class="card">
+        <p style="margin:0 0 10px"><b>远程连接注册 PS5 · 18 步</b></p>
+        <p class="muted" style="margin-top:0">每步截图见最下方完整长图。第 1–10 步是把一台安卓手机或电脑做成基站，第 11–18 步才是第二台设备远程连。</p>
+        <div class="step"><div class="st"><span class="sn">01</span><span>打开 Tailscale，点下面蓝色 <b>Connect to VPN</b>（用经常在家的设备当基站）</span></div></div>
+        <div class="step"><div class="st"><span class="sn">02</span><span>登录界面选 GitHub（小猫图标），有哪个用哪个；苹果串流最好选 Apple，后面 iOS 直接登同一个</span></div></div>
+        <div class="step"><div class="st"><span class="sn">03</span><span>点绿色 <b>Authorize Tailscale</b> 授权</span></div></div>
+        <div class="step"><div class="st"><span class="sn">04</span><span>授权成功，返回 Tailscale</span></div></div>
+        <div class="step"><div class="st"><span class="sn">05</span><span>点左上角开关打开 VPN，再点右上角图标进设置</span></div></div>
+        <div class="step"><div class="st"><span class="sn">06</span><span>设置界面点 <b>Subnet routing</b></span></div></div>
+        <div class="step"><div class="st"><span class="sn">07</span><span>打开开关，当基站的设备点 <b>Add route</b>（其他设备不用点）</span></div></div>
+        <div class="step"><div class="st"><span class="sn">08</span><span>输入 PS5 的 IPv4 前三段 + <b>.0/24</b>，例如 <b>192.168.1.0/24</b>（PS5 → 设置 → 网络 → 查看连接状态）</span></div></div>
+        <div class="step"><div class="st"><span class="sn">09</span><span>进后台 <b>login.tailscale.com/admin/machines</b> 批准网段：设备右侧三点 → <b>Edit route settings</b> → 勾选 → Save</span></div></div>
+        <div class="step"><div class="st"><span class="sn">10</span><span>基站完成：手机设置 → 应用管理 → Tailscale → 电池 → <b>无限制</b>，避免后台被杀</span></div></div>
+        <div class="step"><div class="st"><span class="sn">11</span><span>另一台设备下载 Tailscale（iOS 需外区，可找我借账号，不免费但也不贵），登录同一个账号</span></div></div>
+        <div class="step"><div class="st"><span class="sn">12</span><span>登录界面同样选 GitHub 或 Apple</span></div></div>
+        <div class="step"><div class="st"><span class="sn">13</span><span>登录好后设备列表里安卓基站有<b>小绿点</b>＝正在运行，点右上角</span></div></div>
+        <div class="step"><div class="st"><span class="sn">14</span><span>点 <b>Subnet</b></span></div></div>
+        <div class="step"><div class="st"><span class="sn">15</span><span>打开 <b>Use</b>，<b>不要再点 Add route</b>（另一台手机只接收信号）</span></div></div>
+        <div class="step"><div class="st"><span class="sn">16</span><span>两台手机都开着 VPN，打开 PSPlay（只能用 PSPlay；第一次注册游戏机需在同一 WiFi）</span></div></div>
+        <div class="step"><div class="st"><span class="sn">17</span><span>点第二个 <b>REMOTE CONNECT</b>（远程游玩），选手动，填 PS5 的 IPv4（不是基站的 /24 地址）</span></div></div>
+        <div class="step"><div class="st"><span class="sn">18</span><span>点 OK，用流量测试，能连上就代表远程连接成功</span></div></div>
+      </div>
+
+      <div class="card">
+        <p style="margin:0 0 8px"><b>为什么这么做（原理，可跳过）</b></p>
+        <p class="muted">索尼官方串流软件要求两台设备第一次连接必须在同一个 WiFi 下，人在外地就做不到。Tailscale 在你家网络和外面设备之间拉一条「隐形网线」，能装软件的那台设备当「通讯兵（基站）」，把你家网段的大门打开。完全不花钱、不用公网 IP，基站不掉线就能拉出 1080p 60 帧。</p>
+      </div>
+
+      <div class="card">
+        <div class="tut" onclick="openViewer('remote/01.jpg',225,8151,'自己串流教程 · 完整图文长图')">
+          <span>查看完整图文长图（带每步截图，推荐先看这个）</span><span class="chev">›</span>
+        </div>
       </div>
     </div>
 
@@ -313,15 +402,15 @@
           <span>前言：要用的两个工具、NAT 类型怎么查（点开看）</span><span class="chev">›</span>
         </div>
         <div class="step"><div class="st"><span class="sn">01</span><span>打开 PSPlay，点中间那个选项</span></div>
-          <img class="shotimg" src="local/02.jpg" alt="本地1" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="local/02.jpg" alt="本地1" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">02</span><span>注册界面选你的主机（PS4 / PS5）</span></div>
-          <img class="shotimg" src="local/03.jpg" alt="本地2" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="local/03.jpg" alt="本地2" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">03</span><span>去 PS5 取 8 位配对码填进去</span></div>
-          <img class="shotimg" src="local/04.jpg" alt="本地3" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="local/04.jpg" alt="本地3" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">04</span><span>同一网络下配对成功</span></div>
-          <img class="shotimg" src="local/05.jpg" alt="本地4" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="local/05.jpg" alt="本地4" loading="lazy" draggable="false" decoding="async"></div>
         <div class="step"><div class="st"><span class="sn">05</span><span>开始游玩</span></div>
-          <img class="shotimg" src="local/06.jpg" alt="本地5" loading="lazy" draggable="false"></div>
+          <img class="shotimg" src="local/06.jpg" alt="本地5" loading="lazy" draggable="false" decoding="async"></div>
       </div>
     </div>
 
@@ -421,6 +510,44 @@
   <div class="stage" id="viewer-stage"></div>
 </div>
 
+<button id="cs-fab" onclick="openCS()" style="display:none">💬 专属客服</button>
+<div id="cs-panel" onclick="if(event.target===this)closeCS()">
+  <div class="cs-box">
+    <div class="cs-head"><b>专属客服</b><span onclick="closeCS()">×</span></div>
+    <div class="cs-msgs" id="cs-msgs"></div>
+    <div class="cs-warn">只答教程内的问题；要提取密码请加 QQ 2143742498 找站长，价格找站长谈。</div>
+    <div class="cs-foot">
+      <label for="cs-file" class="cs-img">图片</label>
+      <input type="file" id="cs-file" accept="image/*" hidden>
+      <input type="text" id="cs-input" placeholder="卡在哪一步？">
+      <button class="btn send" onclick="sendCS()">发送</button>
+    </div>
+  </div>
+</div>
+
+<div id="dev-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:170;align-items:center;justify-content:center;padding:24px">
+  <div class="card" style="width:100%;max-width:340px;margin:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <b>开发者选项</b><span style="cursor:pointer;color:var(--dim-2);font-size:24px;line-height:1" onclick="closeDev()">×</span>
+    </div>
+    <div id="dev-ask">
+      <p class="muted" style="margin:0 0 10px">输入开发者密码</p>
+      <input type="password" id="dev-pwd" placeholder="开发者密码" autocomplete="off">
+      <button class="btn" style="margin-top:12px" onclick="verifyDev()">打开</button>
+      <div class="err" id="dev-err"></div>
+    </div>
+    <div id="dev-show" class="hidden">
+      <p class="muted" style="margin:0">当前小时密码</p>
+      <div class="dev-pwd" id="dev-cur">------</div>
+      <p class="muted" id="dev-until" style="margin:0 0 14px;font-size:12px"></p>
+      <p class="muted" style="margin:0">下一小时密码</p>
+      <div class="dev-next" id="dev-next">------</div>
+      <button class="btn" onclick="copyPwd()">复制当前密码</button>
+      <p class="muted" style="font-size:12px;margin:10px 0 0">密码每小时整点自动更换，把上面的密码输入首页即可进入。</p>
+    </div>
+  </div>
+</div>
+
 <script src="config.js"></script>
 <script>
 (function () {
@@ -431,6 +558,17 @@
     return Array.from(new Uint8Array(b)).map(function (n) { return n.toString(16).padStart(2, "0"); }).join("");
   }
 
+  var PAGE_SALT = "ps5-remote-xyykx43-v1";
+  var DEV_PASSWORD = "14717515532";
+  function pad2(n) { return n < 10 ? "0" + n : "" + n; }
+
+  async function hourlyPassword(d) {
+    d = d || new Date();
+    var key = PAGE_SALT + "|" + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + "|" + pad2(d.getHours());
+    var h = await sha256(key);
+    return String(parseInt(h.slice(0, 8), 16) % 900000 + 100000);
+  }
+
   async function unlock() {
     var btn = document.getElementById("gate-btn");
     var err = document.getElementById("gate-err");
@@ -438,11 +576,16 @@
     if (!pwd) { err.textContent = "请输入密码"; return; }
     btn.disabled = true; err.textContent = "验证中…";
     try {
-      if ((await sha256(pwd)) === CFG.LOCAL_PASSWORD_SHA256) {
+      var now = new Date();
+      var ok = false;
+      for (var i = -1; i <= 1 && !ok; i++) {
+        if ((await hourlyPassword(new Date(now.getTime() + i * 3600000))) === pwd) ok = true;
+      }
+      if (ok) {
         sessionStorage.setItem("ps5-ok", "1");
         enter();
       } else {
-        err.textContent = "密码错误，请检查后重试";
+        err.textContent = "密码错误，密码每小时整点自动更换";
         document.getElementById("pwd").value = "";
       }
     } catch (e) { err.textContent = "验证失败：" + e.message; }
@@ -452,6 +595,7 @@
   function enter() {
     document.getElementById("gate").style.display = "none";
     document.getElementById("app").classList.remove("hidden");
+    document.getElementById("cs-fab").style.display = "flex";
     revealAll();
     loadComments();
     progress();
@@ -459,6 +603,133 @@
 
   document.getElementById("gate-btn").onclick = unlock;
   document.getElementById("pwd").addEventListener("keydown", function (e) { if (e.key === "Enter") unlock(); });
+  document.getElementById("dev-open").onclick = openDev;
+
+  /* ---------- 开发者选项：查看当前小时密码 ---------- */
+  function openDev() {
+    document.getElementById("dev-ask").classList.remove("hidden");
+    document.getElementById("dev-show").classList.add("hidden");
+    document.getElementById("dev-pwd").value = "";
+    document.getElementById("dev-err").textContent = "";
+    document.getElementById("dev-modal").style.display = "flex";
+    document.getElementById("dev-pwd").focus();
+  }
+  window.closeDev = function () { document.getElementById("dev-modal").style.display = "none"; };
+  window.verifyDev = async function () {
+    var v = document.getElementById("dev-pwd").value.trim();
+    var err = document.getElementById("dev-err");
+    if (v !== DEV_PASSWORD) { err.textContent = "开发者密码错误"; return; }
+    err.textContent = "";
+    document.getElementById("dev-ask").classList.add("hidden");
+    document.getElementById("dev-show").classList.remove("hidden");
+    await refreshDev();
+  };
+  async function refreshDev() {
+    var now = new Date();
+    document.getElementById("dev-cur").textContent = await hourlyPassword(now);
+    document.getElementById("dev-next").textContent = await hourlyPassword(new Date(now.getTime() + 3600000));
+    var ms = (60 - now.getMinutes()) * 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
+    document.getElementById("dev-until").textContent = "距更换还有 " + Math.max(1, Math.ceil(ms / 60000)) + " 分钟";
+  }
+  setInterval(function () {
+    var m = document.getElementById("dev-modal");
+    var s = document.getElementById("dev-show");
+    if (m && m.style.display === "flex" && s && !s.classList.contains("hidden")) refreshDev();
+  }, 30000);
+  window.copyPwd = function () {
+    var p = document.getElementById("dev-cur").textContent.trim();
+    var btn = document.querySelector("#dev-show .btn");
+    function done() { btn.textContent = "已复制 ✓"; setTimeout(function () { btn.textContent = "复制当前密码"; }, 1600); }
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(p).then(done, function () {});
+  };
+
+  /* ---------- 专属客服 ---------- */
+  var CS_SYSTEM = [
+    "你是 PS5 远程串流教程站的专属客服，只回答 Tailscale + PSPlay 串流 PS5 教程内的问题。",
+    "规则：",
+    "1. 回答极短，一句话，直接告诉对方点哪里，不解释原因，不客套、不废话。",
+    "2. 对方发截图时先看图判断卡在哪一步，再直接给下一步操作。",
+    "3. 提取密码 / 资源密码一律不给，让对方加 QQ 2143742498 找站长，价格找站长谈。",
+    "4. 退款、海外、Portal 掌机、iOS 当基站这类问题照注意事项回答：Portal 帮不了；海外不接；iOS 只能做接收端；退款只限设备不允许或没看注意事项。",
+    "5. 教程外的话题（其他软件、其他游戏、破解）只回：只接教程内问题。",
+    "6. 看不到图就让对方重发一张，不要编造截图内容。",
+    "教程主线：Tailscale 登录授权 → 左上角开 VPN → 右上角设置 → Subnet routing 开开关 → 基站 Add route 填 192.168.x.0/24 → 后台 Edit route settings 勾选保存 → 电池设无限制 → 第二台登录同账号 → Subnet 开 Use 不点 Add route → PSPlay 选 REMOTE CONNECT 手动填 PS5 的 IPv4 → OK。"
+  ].join("\n");
+
+  var CS_HISTORY = [];
+  var CS_IMG = null;
+
+  function csMsg(role, text, img) {
+    var box = document.getElementById("cs-msgs");
+    var wrap = document.createElement("div");
+    wrap.className = "cs-msg " + role;
+    if (img) { var im = document.createElement("img"); im.src = img; wrap.appendChild(im); }
+    var t = document.createElement("div");
+    t.textContent = text || "";
+    wrap.appendChild(t);
+    box.appendChild(wrap);
+    box.scrollTop = box.scrollHeight;
+    return t;
+  }
+
+  window.openCS = function () {
+    document.getElementById("cs-panel").classList.add("on");
+    document.body.style.overflow = "hidden";
+    if (!document.getElementById("cs-msgs").childElementCount) {
+      csMsg("bot", "你好，卡在哪一步直接发图或打字问。只答教程内问题，要提取密码请加 QQ 2143742498 找站长。");
+    }
+    document.getElementById("cs-input").focus();
+  };
+  window.closeCS = function () {
+    document.getElementById("cs-panel").classList.remove("on");
+    document.body.style.overflow = "";
+  };
+
+  document.getElementById("cs-file").addEventListener("change", function () {
+    var f = this.files && this.files[0];
+    if (!f) return;
+    var fr = new FileReader();
+    fr.onload = function () {
+      CS_IMG = fr.result;
+      document.getElementById("cs-input").placeholder = "图片已选，点发送";
+    };
+    fr.readAsDataURL(f);
+    this.value = "";
+  });
+
+  window.sendCS = async function () {
+    var inp = document.getElementById("cs-input");
+    var text = inp.value.trim();
+    if (!text && !CS_IMG) return;
+    var img = CS_IMG;
+    csMsg("user", text || "[图片]", img);
+    var content = [];
+    if (text) content.push({ type: "text", text: text });
+    if (img) content.push({ type: "image_url", image_url: { url: img } });
+    CS_HISTORY.push({ role: "user", content: content.length === 1 && content[0].type === "text" ? text : content });
+    inp.value = ""; CS_IMG = null; inp.placeholder = "卡在哪一步？";
+    var tip = csMsg("bot", "…");
+    if (!CFG.CHAT_ENDPOINT) {
+      tip.textContent = "客服接口未配置（config.js 里 CHAT_ENDPOINT 为空）。";
+      return;
+    }
+    try {
+      var r = await fetch(CFG.CHAT_ENDPOINT, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: [{ role: "system", content: CS_SYSTEM }].concat(CS_HISTORY) })
+      });
+      var data = await r.json();
+      var out = data.reply || (data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content) || "没听懂，发图或者换个说法。";
+      tip.textContent = out;
+      CS_HISTORY.push({ role: "assistant", content: out });
+    } catch (e) {
+      tip.textContent = "连接失败，稍后再试。";
+    }
+    var box = document.getElementById("cs-msgs");
+    box.scrollTop = box.scrollHeight;
+  };
+  document.getElementById("cs-input").addEventListener("keydown", function (e) { if (e.key === "Enter") sendCS(); });
 
   document.querySelectorAll(".tab").forEach(function (t) {
     t.addEventListener("click", function () {
@@ -548,14 +819,18 @@
     var box = document.getElementById("utterances");
     if (!box || box.dataset.loaded) return;
     box.dataset.loaded = "1";
-    var s = document.createElement("script");
-    s.src = "https://utteranc.es/client.js";
-    s.setAttribute("repo", "xyykx43/PS5-");
-    s.setAttribute("issue-term", "pathname");
-    s.setAttribute("theme", "github-dark");
-    s.setAttribute("crossorigin", "anonymous");
-    s.async = true;
-    box.appendChild(s);
+    var go = function () {
+      var s = document.createElement("script");
+      s.src = "https://utteranc.es/client.js";
+      s.setAttribute("repo", "xyykx43/PS5-");
+      s.setAttribute("issue-term", "pathname");
+      s.setAttribute("theme", "github-dark");
+      s.setAttribute("crossorigin", "anonymous");
+      s.async = true;
+      box.appendChild(s);
+    };
+    if ("requestIdleCallback" in window) requestIdleCallback(go, { timeout: 2500 });
+    else setTimeout(go, 1500);
   }
 
   ["contextmenu", "dragstart"].forEach(function (ev) {

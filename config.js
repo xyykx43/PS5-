@@ -1,11 +1,15 @@
 // ============================================================
 // 站点配置
-// 评论区已改用 GitHub（utterances），不需要任何 key。
-// 密码目前是前端哈希校验（门槛式），真正保密需要服务端，暂未接入。
+// 评论区用 GitHub（utterances），不需要 key。
+// 首页密码已改为「每小时整点自动更换」，算法在 index.html 的
+// hourlyPassword()，这里不再存固定密码哈希。
 // ============================================================
 window.SITE_CONFIG = {
-  // 主密码的 SHA-256。改密码：在终端跑
-  //   node -e "console.log(require('crypto').createHash('sha256').update('新密码').digest('hex'))"
-  // 把输出替换下面这串（默认值对应旧密码）
-  LOCAL_PASSWORD_SHA256: "470081e7b6dfd78c4a1709549561a0f1c0d0f3277770fb25a81edd7cba7ee633"
+  // 旧固定密码哈希（已弃用，保留字段防止旧代码报错）
+  LOCAL_PASSWORD_SHA256: "",
+
+  // 专属客服接口地址：填你的 DeepSeek 代理（Cloudflare Worker 或自己的服务器）。
+  // 留空时客服窗口会提示「接口未配置」。
+  // 接口约定：POST {messages:[{role,content}]}，返回 {reply:"..."} 或 OpenAI 格式的 choices。
+  CHAT_ENDPOINT: ""
 };
