@@ -581,9 +581,14 @@
     </div>
     <div id="dev-show" class="hidden">
       <p class="muted" id="dev-period" style="margin:0 0 10px;font-size:12px"></p>
-      <p class="muted" style="margin:0">主页密码</p>
+      <p class="muted" style="margin:0">主页密码（默认周期）</p>
       <div class="dev-pwd" id="dev-cur">------</div>
       <p class="muted" id="dev-until" style="margin:0 0 12px;font-size:12px"></p>
+      <p class="muted" style="margin:0 0 6px">按时长卖的密码（给客户对应时长的即可）</p>
+      <p class="dev-next" id="dev-t60" style="margin:0 0 4px;font-size:15px">1 小时：------</p>
+      <p class="dev-next" id="dev-t120" style="margin:0 0 4px;font-size:15px">2 小时：------</p>
+      <p class="dev-next" id="dev-t480" style="margin:0 0 4px;font-size:15px">8 小时：------</p>
+      <p class="dev-next" id="dev-t1440" style="margin:0 0 12px;font-size:15px">24 小时：------</p>
       <p class="muted" style="margin:0">客服密码</p>
       <div class="dev-next" id="dev-cs">------</div>
       <p class="muted" style="margin:6px 0 0;font-size:12px">客服密码与主页密码不同，点「专属客服」时输入。</p>
@@ -616,12 +621,17 @@
     var m = parseInt(CFG.PASSWORD_PERIOD_MINUTES, 10);
     return (m && m >= 5) ? m : 60;
   }
-  async function hourlyPassword(d, kind) {
+  // 可按时长生成的密码：1h / 2h / 8h / 24h 四套并存
+  var PWD_TIERS = [60, 120, 480, 1440];
+  async function tierPassword(d, kind, minutes) {
     d = d || new Date();
-    var bucket = Math.floor(d.getTime() / (periodMinutes() * 60000));
-    var key = PAGE_SALT + (kind === "cs" ? "|cs" : "") + "|" + bucket;
+    var bucket = Math.floor(d.getTime() / (minutes * 60000));
+    var key = PAGE_SALT + (kind === "cs" ? "|cs" : "") + "|" + minutes + "|" + bucket;
     var h = await sha256(key);
     return String(parseInt(h.slice(0, 8), 16) % 900000 + 100000);
+  }
+  async function hourlyPassword(d, kind) {
+    return tierPassword(d, kind, periodMinutes());
   }
 
   async function unlock() {
@@ -632,10 +642,13 @@
     btn.disabled = true; err.textContent = "验证中…";
     try {
       var now = new Date();
-      var step = periodMinutes() * 60000;
+      var mins = [periodMinutes()].concat(PWD_TIERS);
       var ok = false;
-      for (var i = -1; i <= 1 && !ok; i++) {
-        if ((await hourlyPassword(new Date(now.getTime() + i * step))) === pwd) ok = true;
+      for (var j = 0; j < mins.length && !ok; j++) {
+        var step = mins[j] * 60000;
+        for (var i = -1; i <= 1 && !ok; i++) {
+          if ((await tierPassword(new Date(now.getTime() + i * step), undefined, mins[j])) === pwd) ok = true;
+        }
       }
       if (ok) {
         sessionStorage.setItem("ps5-ok", "1");
@@ -683,9 +696,13 @@
   async function refreshDev() {
     var now = new Date();
     var period = periodMinutes() * 60000;
-    document.getElementById("dev-period").textContent = "密码周期：" + periodMinutes() + " 分钟（改 config.js 的 PASSWORD_PERIOD_MINUTES）";
+    document.getElementById("dev-period").textContent = "默认周期：" + periodMinutes() + " 分钟（改 config.js 的 PASSWORD_PERIOD_MINUTES）";
     document.getElementById("dev-cur").textContent = await hourlyPassword(now);
     document.getElementById("dev-cs").textContent = await hourlyPassword(now, "cs");
+    var labels = {60: "1 小时", 120: "2 小时", 480: "8 小时", 1440: "24 小时"};
+    for (var k in labels) {
+      document.getElementById("dev-t" + k).textContent = labels[k] + "： " + (await tierPassword(now, undefined, parseInt(k, 10)));
+    }
     document.getElementById("dev-next").textContent = await hourlyPassword(new Date(now.getTime() + period));
     var ms = period - (now.getTime() % period);
     document.getElementById("dev-until").textContent = "距更换还有 " + Math.max(1, Math.ceil(ms / 60000)) + " 分钟";
