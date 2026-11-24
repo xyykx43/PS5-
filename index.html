@@ -510,7 +510,7 @@
   <div class="stage" id="viewer-stage"></div>
 </div>
 
-<button id="cs-fab" onclick="openCS()" style="display:none">💬 专属客服</button>
+<button id="cs-fab" onclick="openCSGate()" style="display:none">💬 专属客服</button>
 <div id="cs-panel" onclick="if(event.target===this)closeCS()">
   <div class="cs-box">
     <div class="cs-head"><b>专属客服</b><span onclick="closeCS()">×</span></div>
@@ -522,6 +522,18 @@
       <input type="text" id="cs-input" placeholder="卡在哪一步？">
       <button class="btn send" onclick="sendCS()">发送</button>
     </div>
+  </div>
+</div>
+
+<div id="cs-lock" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:165;align-items:center;justify-content:center;padding:24px">
+  <div class="card" style="width:100%;max-width:340px;margin:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+      <b>专属客服</b><span style="cursor:pointer;color:var(--dim-2);font-size:24px;line-height:1" onclick="closeCsLock()">×</span>
+    </div>
+    <p class="muted" style="margin:0 0 10px">输入客服密码（在「开发者选项」里查）</p>
+    <input type="password" id="cs-lock-pwd" placeholder="客服密码" autocomplete="off">
+    <button class="btn" style="margin-top:12px" onclick="verifyCsLock()">进入客服</button>
+    <div class="err" id="cs-lock-err"></div>
   </div>
 </div>
 
@@ -537,13 +549,19 @@
       <div class="err" id="dev-err"></div>
     </div>
     <div id="dev-show" class="hidden">
-      <p class="muted" style="margin:0">当前小时密码</p>
+      <p class="muted" style="margin:0">主页密码（当前小时）</p>
       <div class="dev-pwd" id="dev-cur">------</div>
-      <p class="muted" id="dev-until" style="margin:0 0 14px;font-size:12px"></p>
-      <p class="muted" style="margin:0">下一小时密码</p>
+      <p class="muted" id="dev-until" style="margin:0 0 12px;font-size:12px"></p>
+      <p class="muted" style="margin:0">客服密码（当前小时）</p>
+      <div class="dev-next" id="dev-cs">------</div>
+      <p class="muted" style="margin:6px 0 0;font-size:12px">客服密码与主页密码不同，点「专属客服」时输入。</p>
+      <p class="muted" style="margin:14px 0 0">下一小时主页密码</p>
       <div class="dev-next" id="dev-next">------</div>
-      <button class="btn" onclick="copyPwd()">复制当前密码</button>
-      <p class="muted" style="font-size:12px;margin:10px 0 0">密码每小时整点自动更换，把上面的密码输入首页即可进入。</p>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button class="btn" onclick="copyPwd('dev-cur')">复制主页密码</button>
+        <button class="btn ghost" onclick="copyPwd('dev-cs')">复制客服密码</button>
+      </div>
+      <p class="muted" style="font-size:12px;margin:10px 0 0">密码每小时整点自动更换。</p>
     </div>
   </div>
 </div>
@@ -562,9 +580,9 @@
   var DEV_PASSWORD = "14717515532";
   function pad2(n) { return n < 10 ? "0" + n : "" + n; }
 
-  async function hourlyPassword(d) {
+  async function hourlyPassword(d, kind) {
     d = d || new Date();
-    var key = PAGE_SALT + "|" + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + "|" + pad2(d.getHours());
+    var key = PAGE_SALT + (kind === "cs" ? "|cs" : "") + "|" + d.getFullYear() + pad2(d.getMonth() + 1) + pad2(d.getDate()) + "|" + pad2(d.getHours());
     var h = await sha256(key);
     return String(parseInt(h.slice(0, 8), 16) % 900000 + 100000);
   }
@@ -627,6 +645,7 @@
   async function refreshDev() {
     var now = new Date();
     document.getElementById("dev-cur").textContent = await hourlyPassword(now);
+    document.getElementById("dev-cs").textContent = await hourlyPassword(now, "cs");
     document.getElementById("dev-next").textContent = await hourlyPassword(new Date(now.getTime() + 3600000));
     var ms = (60 - now.getMinutes()) * 60000 - now.getSeconds() * 1000 - now.getMilliseconds();
     document.getElementById("dev-until").textContent = "距更换还有 " + Math.max(1, Math.ceil(ms / 60000)) + " 分钟";
@@ -636,10 +655,12 @@
     var s = document.getElementById("dev-show");
     if (m && m.style.display === "flex" && s && !s.classList.contains("hidden")) refreshDev();
   }, 30000);
-  window.copyPwd = function () {
-    var p = document.getElementById("dev-cur").textContent.trim();
-    var btn = document.querySelector("#dev-show .btn");
-    function done() { btn.textContent = "已复制 ✓"; setTimeout(function () { btn.textContent = "复制当前密码"; }, 1600); }
+  window.copyPwd = function (id) {
+    id = id || "dev-cur";
+    var p = document.getElementById(id).textContent.trim();
+    var btn = window.event && window.event.target;
+    var label = id === "dev-cs" ? "复制客服密码" : "复制主页密码";
+    function done() { if (btn) { btn.textContent = "已复制 ✓"; setTimeout(function () { btn.textContent = label; }, 1600); } }
     if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(p).then(done, function () {});
   };
 
@@ -671,6 +692,33 @@
     box.scrollTop = box.scrollHeight;
     return t;
   }
+
+  window.openCSGate = function () {
+    if (sessionStorage.getItem("cs-ok") === "1") { openCS(); return; }
+    document.getElementById("cs-lock").style.display = "flex";
+    document.getElementById("cs-lock-pwd").value = "";
+    document.getElementById("cs-lock-err").textContent = "";
+    document.getElementById("cs-lock-pwd").focus();
+  };
+  window.closeCsLock = function () { document.getElementById("cs-lock").style.display = "none"; };
+  window.verifyCsLock = async function () {
+    var v = document.getElementById("cs-lock-pwd").value.trim();
+    var err = document.getElementById("cs-lock-err");
+    if (!v) { err.textContent = "请输入客服密码"; return; }
+    var now = new Date();
+    var ok = false;
+    for (var i = -1; i <= 1 && !ok; i++) {
+      if ((await hourlyPassword(new Date(now.getTime() + i * 3600000), "cs")) === v) ok = true;
+    }
+    if (ok) {
+      sessionStorage.setItem("cs-ok", "1");
+      closeCsLock();
+      openCS();
+    } else {
+      err.textContent = "密码错误，去开发者选项里查";
+    }
+  };
+  document.getElementById("cs-lock-pwd").addEventListener("keydown", function (e) { if (e.key === "Enter") verifyCsLock(); });
 
   window.openCS = function () {
     document.getElementById("cs-panel").classList.add("on");
