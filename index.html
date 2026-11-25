@@ -242,7 +242,7 @@
     <h1>让 PS5 在任何地方都能玩</h1>
     <p class="sub">Tailscale 组网 + PSPlay 串流，先备好清单里的东西，再跟着点 13 步。</p>
     <div class="chips">
-      <span class="chip d">NAT 1/2 可连</span>
+      <span class="chip d">NAT 1/2/3 可连</span>
       <span class="chip">约 20 分钟</span>
       <span class="chip">全免费方案</span>
     </div>
@@ -257,7 +257,7 @@
         <li><span class="n">2</span><span>一个 <span style="font-weight:640">Tailscale 账号</span>：用 GitHub、Google、微软或苹果账号登录，1 分钟</span></li>
         <li><span class="n">3</span><span>装好 <span style="font-weight:640">PSPlay</span>（安卓约 38 元；iOS 用外区账号买）</span></li>
         <li><span class="n">4</span><span>PS5 已开机，并在 设置 → 系统 → 远程游玩 里启用远程游玩</span></li>
-        <li><span class="n">5</span><span>家里网络是 NAT 1 或 NAT 2（PS5 → 设置 → 网络 → 查看连接状态）</span></li>
+        <li><span class="n">5</span><span>家里网络是 NAT 1/2/3（NAT3 也能连，NAT4 不行；PS5 → 设置 → 网络 → 查看连接状态）</span></li>
         <li><span class="n">6</span><span>一台常开的「基站」：旧手机或电脑，插电不关机</span></li>
       </ul>
     </div>
@@ -282,7 +282,7 @@
       </div>
       <div class="muted" style="margin-top:6px">安卓点下面按钮直接下载，v1.104.7 · 101MB，建议连 WiFi；iOS 需外区 App Store。</div>
       <div class="link-row">
-        <a class="go" href="https://github.com/tailscale/tailscale-android/releases/download/1.104.7-tfb3b9b296-g226f029a3/tailscale-android-universal-1.104.7.apk" target="_blank" rel="noopener">点我下载安卓版 APK</a>
+        <a class="go" href="https://gh-proxy.com/https://github.com/tailscale/tailscale-android/releases/download/1.104.7-tfb3b9b296-g226f029a3/tailscale-android-universal-1.104.7.apk" target="_blank" rel="noopener">点我下载安卓版 APK</a>
         <a class="alt" href="https://tailscale.com/download" target="_blank" rel="noopener">官方下载页（备用，国内较慢）</a>
       </div>
     </div>
@@ -479,7 +479,7 @@
     <div class="sec"><span class="mark">//</span><h2>常见问题</h2><span class="line"></span></div>
     <div class="card">
       <details><summary>一定要买 PSPlay 吗？官方 App 不行？</summary><p>官方 PS Remote Play 免费，但首次连接强制要求两台设备在同一 WiFi；人不在家就做不到，所以异地基本都用 PSPlay。本地同 WiFi 玩，官方 App 够用。</p></details>
-      <details><summary>怎么查我的 NAT 类型？</summary><p>PS5 → 设置 → 网络 → 查看连接状态 → NAT 类型。1/2 可以，3 会卡，4 基本连不上。查到 4 就别买软件了，先找运营商开公网 IP。</p></details>
+      <details><summary>怎么查我的 NAT 类型？</summary><p>PS5 → 设置 → 网络 → 查看连接状态 → NAT 类型。1/2/3 都能连，4 基本连不上。查到 4 就别买软件了，先找运营商开公网 IP。</p></details>
       <details><summary>为什么填完网段没有任何反应？</summary><p>Tailscale 要两步：App 里 Add route 只是声明，还必须去后台批准 —— 设备右边三点 → Edit route settings → 勾选 → Save。</p></details>
       <details><summary>基站用什么设备最好？</summary><p>首选家里一直开着的电脑（Win/Mac）。只能用安卓手机的话，必须插电、不息屏、关掉电池限制，且不能带出门。它一断，你在外面就连不上。</p></details>
       <details><summary>配对码老是报错？</summary><p>PS5 屏幕上那 8 位数只有几分钟有效期，拿到立刻填进 PSPlay；超时回 PS5 重新点「链接设备」。</p></details>
@@ -803,7 +803,7 @@
     "",
     "五、常见问题",
     "一定要 PSPlay：官方 PS Remote Play 免费但首次连接强制同一 WiFi，异地做不到，所以用 PSPlay。",
-    "查 NAT：PS5 → 设置 → 网络 → 查看连接状态 → NAT 类型，1/2 可以，3 会卡，4 连不上。",
+    "查 NAT：PS5 → 设置 → 网络 → 查看连接状态 → NAT 类型，1/2/3 都能连，4 连不上。",
     "填完网段没反应：Tailscale 两步，App 里 Add route 只是声明，还要后台批准。",
     "基站设备：首选一直开着的电脑（Win/Mac）；安卓必须插电、不息屏、关电池限制、不能带出门。",
     "配对码报错：8 位码几分钟有效，过期回 PS5 重新点链接设备。",
