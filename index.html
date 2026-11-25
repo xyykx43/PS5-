@@ -568,9 +568,9 @@
   </div>
 </div>
 
-<div id="dev-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:170;align-items:center;justify-content:center;padding:24px">
-  <div class="card" style="width:100%;max-width:340px;margin:0">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+<div id="dev-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);backdrop-filter:blur(8px);z-index:170;align-items:center;justify-content:center;padding:18px">
+  <div class="card" style="width:100%;max-width:340px;margin:0;max-height:88vh;overflow-y:auto;padding-top:0">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;position:sticky;top:0;z-index:2;background:linear-gradient(180deg,#23262b,#1f2226);padding:12px 0 10px">
       <b>开发者选项</b><span style="cursor:pointer;color:var(--dim-2);font-size:24px;line-height:1" onclick="closeDev()">×</span>
     </div>
     <div id="dev-ask">
@@ -580,30 +580,30 @@
       <div class="err" id="dev-err"></div>
     </div>
     <div id="dev-show" class="hidden">
-      <p class="muted" id="dev-period" style="margin:0 0 10px;font-size:12px"></p>
+      <p class="muted" id="dev-period" style="margin:0 0 8px;font-size:12px"></p>
       <p class="muted" style="margin:0">主页密码（默认周期）</p>
-      <div class="dev-pwd" id="dev-cur">------</div>
-      <p class="muted" id="dev-until" style="margin:0 0 12px;font-size:12px"></p>
-      <p class="muted" style="margin:0 0 6px">按时长卖的密码（给客户对应时长的即可）</p>
-      <p class="dev-next" style="margin:0 0 4px;font-size:15px">1 小时：<span id="dev-t60">------</span> <a href="javascript:void(0)" style="font-size:12px;color:var(--dim-2)" onclick="copyPwd('dev-t60')">复制</a></p>
-      <p class="dev-next" style="margin:0 0 4px;font-size:15px">2 小时：<span id="dev-t120">------</span> <a href="javascript:void(0)" style="font-size:12px;color:var(--dim-2)" onclick="copyPwd('dev-t120')">复制</a></p>
-      <p class="dev-next" style="margin:0 0 4px;font-size:15px">8 小时：<span id="dev-t480">------</span> <a href="javascript:void(0)" style="font-size:12px;color:var(--dim-2)" onclick="copyPwd('dev-t480')">复制</a></p>
-      <p class="dev-next" style="margin:0 0 12px;font-size:15px">24 小时：<span id="dev-t1440">------</span> <a href="javascript:void(0)" style="font-size:12px;color:var(--dim-2)" onclick="copyPwd('dev-t1440')">复制</a></p>
+      <div class="dev-pwd" id="dev-cur" style="font-size:26px">------</div>
+      <p class="muted" id="dev-until" style="margin:0 0 10px;font-size:12px"></p>
+      <p class="muted" style="margin:0 0 5px">按时长卖（给客户对应时长）</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 10px;margin-bottom:10px">
+        <div class="dev-next" style="font-size:14px">1h <span id="dev-t60">------</span> <a href="javascript:void(0)" style="font-size:11px;color:var(--dim-2)" onclick="copyPwd('dev-t60')">复制</a></div>
+        <div class="dev-next" style="font-size:14px">2h <span id="dev-t120">------</span> <a href="javascript:void(0)" style="font-size:11px;color:var(--dim-2)" onclick="copyPwd('dev-t120')">复制</a></div>
+        <div class="dev-next" style="font-size:14px">8h <span id="dev-t480">------</span> <a href="javascript:void(0)" style="font-size:11px;color:var(--dim-2)" onclick="copyPwd('dev-t480')">复制</a></div>
+        <div class="dev-next" style="font-size:14px">24h <span id="dev-t1440">------</span> <a href="javascript:void(0)" style="font-size:11px;color:var(--dim-2)" onclick="copyPwd('dev-t1440')">复制</a></div>
+      </div>
       <p class="muted" style="margin:0">客服密码</p>
-      <div class="dev-next" id="dev-cs">------</div>
-      <p class="muted" style="margin:6px 0 0;font-size:12px">客服密码与主页密码不同，点「专属客服」时输入。</p>
-      <p class="muted" style="margin:14px 0 0">下一个周期的主页密码</p>
-      <div class="dev-next" id="dev-next">------</div>
-      <div style="display:flex;gap:8px;margin-top:14px">
+      <div class="dev-next" id="dev-cs" style="font-size:18px">------</div>
+      <p class="muted" style="margin:8px 0 0;font-size:12px">下一个周期主页密码</p>
+      <div class="dev-next" id="dev-next" style="font-size:18px">------</div>
+      <div style="display:flex;gap:8px;margin-top:12px">
         <button class="btn" onclick="copyPwd('dev-cur')">复制主页密码</button>
         <button class="btn ghost" onclick="copyPwd('dev-cs')">复制客服密码</button>
       </div>
-      <p class="muted" style="font-size:12px;margin:10px 0 0">密码按设定周期自动更换，周期在全站统一的 config.js 里设置，改完推送生效。</p>
-      <div style="margin-top:16px;text-align:center">
-        <img src="assets/site-qr.png" alt="站点二维码" style="width:150px;height:150px;border-radius:12px;background:#fff;padding:6px">
-        <p class="muted" style="font-size:12px;margin:6px 0 0">扫码打开本站</p>
+      <div style="margin-top:12px;text-align:center">
+        <img src="assets/site-qr.png" alt="站点二维码" style="width:104px;height:104px;border-radius:10px;background:#fff;padding:5px">
+        <p class="muted" style="font-size:11px;margin:4px 0 0">扫码打开本站</p>
       </div>
-      <div style="display:flex;gap:8px;margin-top:12px">
+      <div style="display:flex;gap:8px;margin-top:8px">
         <button class="btn ghost" onclick="copySite()">复制站点链接</button>
         <button class="btn ghost" onclick="copyAd()">复制宣传文案</button>
       </div>
